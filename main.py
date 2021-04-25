@@ -23,7 +23,6 @@ import UI_SetCamera
 import UI_SetAlgorithm
 
 
-
 class MainWindow(QMainWindow,Ui_MainWindow):
     def __init__(self,parent = None):
         super(MainWindow,self).__init__(parent)  # 调用父类QWidget中的init方法
@@ -49,9 +48,37 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         '''时间刷新'''
         self.timer = QTimer()    #设定时间周期
         self.timer.timeout.connect(self.slot_timeOut)
-        self.timer.setInterval(300)     #设置定时周期，超出周期启动timeout函数
+        self.timer.setInterval(200)     #设置定时周期，超出周期启动timeout函数
+        self.timer.start()  #启动
 
 
+        '''视频开始'''
+
+        self.open_flag = False
+        self.video_stream = cv2.VideoCapture(0)
+        self.painter = QPainter(self)
+        self.open_flag = bool(1 - self.open_flag)
+
+    def paintEvent(self, a0: QtGui.QPaintEvent):
+        if self.open_flag:
+            ret, frame = self.video_stream.read()
+            frame = cv2.resize(frame, (1280, 768), interpolation=cv2.INTER_AREA)
+            #cv2.imshow("aa", frame)     #取这个图像
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # cv2.imshow('test',frame)
+            # cv2.waitKey(10)
+            self.Qframe = QImage(frame.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3,
+                                 QImage.Format_RGB888)
+            # print(Qframe)
+            # pix = QPixmap(Qframe).scaled(frame.shape[1], frame.shape[0])
+            # self.setPixmap(pix)
+            # QRect qq(20,50,self.img.width,self.img.height)
+            self.labelCamera.setPixmap(QPixmap.fromImage(self.Qframe))
+            # self.painter.drawImage(QPoint(20,50),Qframe)
+            # print(Qframe)
+            self.update()
+
+        '''视频结束'''
 
     def slot_timeOut(self):     #延时触发该函数   定时
         tm = QTime.currentTime()    #获取当前时间
@@ -195,6 +222,8 @@ class SetCameraPage(QDialog,UI_SetCamera.Ui_Dialog):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # 创建一个应用程序对象
     window = MainWindow()
-    # window.startTimer(5000)
     window.show()
+
     sys.exit(app.exec_())  # 0是正常退出
+    cap.release()
+    cv2.destroyAllWindows()

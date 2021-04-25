@@ -1595,7 +1595,7 @@ class Ui_MainWindow(object):
 "color:yellow;")
         self.Btn_Operator.setObjectName("Btn_Operator")
         self.Btn_parameterPanel_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.Btn_parameterPanel_2.setGeometry(QtCore.QRect(1290, 920, 171, 51))
+        self.Btn_parameterPanel_2.setGeometry(QtCore.QRect(1220, 890, 171, 51))
         self.Btn_parameterPanel_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.Btn_parameterPanel_2.setStyleSheet("font: 12pt \"微软雅黑\";")
         self.Btn_parameterPanel_2.setObjectName("Btn_parameterPanel_2")

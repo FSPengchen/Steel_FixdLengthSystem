@@ -3720,8 +3720,8 @@ color:yellow;</string>
    <widget class="QPushButton" name="Btn_parameterPanel_2">
     <property name="geometry">
      <rect>
-      <x>1290</x>
-      <y>920</y>
+      <x>1220</x>
+      <y>890</y>
       <width>171</width>
       <height>51</height>
      </rect>
