@@ -10,6 +10,8 @@ from sklearn import svm
 import cv2
 import HslCommunication
 import ConsolePLC
+from apscheduler.schedulers.blocking import BlockingScheduler   #线程定时器
+
 
 from UI_MainPage import *
 import UI_SetFurNo
@@ -61,22 +63,20 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
     def paintEvent(self, a0: QtGui.QPaintEvent):
         if self.open_flag:
-            ret, frame = self.video_stream.read()
-            frame = cv2.resize(frame, (1280, 768), interpolation=cv2.INTER_AREA)
-            #cv2.imshow("aa", frame)     #取这个图像
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            # cv2.imshow('test',frame)
-            # cv2.waitKey(10)
+            ret, frame = self.video_stream.read(
+            '''尝试2'''
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # 转换为灰度图
+            ret, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)  #二值阀图像，更好的边缘检测
+            binary, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+            img = cv2.drawContours(frame, contours, -1, (0, 0, 255), 2)
+
             self.Qframe = QImage(frame.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3,
                                  QImage.Format_RGB888)
-            # print(Qframe)
-            # pix = QPixmap(Qframe).scaled(frame.shape[1], frame.shape[0])
-            # self.setPixmap(pix)
-            # QRect qq(20,50,self.img.width,self.img.height)
+
             self.labelCamera.setPixmap(QPixmap.fromImage(self.Qframe))
-            # self.painter.drawImage(QPoint(20,50),Qframe)
-            # print(Qframe)
             self.update()
+            '''尝试2结束'''
+
 
         '''视频结束'''
 
