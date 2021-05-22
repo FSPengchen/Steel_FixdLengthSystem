@@ -51,7 +51,7 @@ color:red;
    <widget class="QLabel" name="Labtxt_class">
     <property name="geometry">
      <rect>
-      <x>850</x>
+      <x>910</x>
       <y>20</y>
       <width>131</width>
       <height>31</height>
@@ -75,7 +75,7 @@ color:red;
    <widget class="QLabel" name="Labtxt_talRoot">
     <property name="geometry">
      <rect>
-      <x>1150</x>
+      <x>1130</x>
       <y>20</y>
       <width>131</width>
       <height>31</height>
@@ -174,25 +174,6 @@ color:red;
      <string>视频参数</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="Btn_parameterPanel">
-    <property name="geometry">
-     <rect>
-      <x>1220</x>
-      <y>890</y>
-      <width>171</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 12pt &quot;微软雅黑&quot;;</string>
-    </property>
-    <property name="text">
-     <string>停止切割</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="Lab_Time">
     <property name="geometry">
      <rect>
@@ -289,7 +270,7 @@ color:yellow;</string>
    <widget class="QLabel" name="Lab_talRoot">
     <property name="geometry">
      <rect>
-      <x>1130</x>
+      <x>1110</x>
       <y>60</y>
       <width>151</width>
       <height>31</height>
@@ -313,7 +294,7 @@ font: 10pt &quot;微软雅黑&quot;;
 color:yellow;</string>
     </property>
     <property name="text">
-     <string>100</string>
+     <string>0</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -346,7 +327,7 @@ font: 10pt &quot;微软雅黑&quot;;
 color:yellow;</string>
     </property>
     <property name="text">
-     <string>100</string>
+     <string>0</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -1283,40 +1264,6 @@ color:yellow
     </property>
     <property name="text">
      <string>0</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLabel" name="Lab_3bRange">
-    <property name="geometry">
-     <rect>
-      <x>1180</x>
-      <y>770</y>
-      <width>111</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>微软雅黑</family>
-      <pointsize>10</pointsize>
-      <weight>9</weight>
-      <italic>false</italic>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color:cornflowerblue;
-font: 75 10pt &quot;微软雅黑&quot;;
-color:yellow
-</string>
-    </property>
-    <property name="text">
-     <string>2406~2412</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -3477,36 +3424,12 @@ color:yellow
      <string>Camera</string>
     </property>
    </widget>
-   <widget class="QLabel" name="Labtxt_operator">
-    <property name="geometry">
-     <rect>
-      <x>980</x>
-      <y>20</y>
-      <width>131</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 12pt &quot;微软雅黑&quot;;
-color:red;
-</string>
-    </property>
-    <property name="text">
-     <string>操作员</string>
-    </property>
-    <property name="textFormat">
-     <enum>Qt::AutoText</enum>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
    <widget class="QPushButton" name="Btn_LocNo">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>110</x>
       <y>60</y>
-      <width>161</width>
+      <width>81</width>
       <height>31</height>
      </rect>
     </property>
@@ -3519,15 +3442,15 @@ font: 10pt &quot;微软雅黑&quot;;
 color:yellow;</string>
     </property>
     <property name="text">
-     <string>铸机号：</string>
+     <string/>
     </property>
    </widget>
    <widget class="QPushButton" name="Btn_FurNo">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>270</x>
       <y>60</y>
-      <width>161</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -3540,7 +3463,7 @@ font: 10pt &quot;微软雅黑&quot;;
 color:yellow;</string>
     </property>
     <property name="text">
-     <string>炉号：</string>
+     <string/>
     </property>
    </widget>
    <widget class="QPushButton" name="Btn_1aSetWeight">
@@ -3678,9 +3601,9 @@ font: 12pt &quot;微软雅黑&quot;;</string>
    <widget class="QPushButton" name="Btn_Class">
     <property name="geometry">
      <rect>
-      <x>860</x>
+      <x>890</x>
       <y>60</y>
-      <width>111</width>
+      <width>171</width>
       <height>31</height>
      </rect>
     </property>
@@ -3693,35 +3616,14 @@ font: 10pt &quot;微软雅黑&quot;;
 color:yellow;</string>
     </property>
     <property name="text">
-     <string>乙班</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Btn_Operator">
-    <property name="geometry">
-     <rect>
-      <x>990</x>
-      <y>60</y>
-      <width>111</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color:royalblue;
-font: 10pt &quot;微软雅黑&quot;;
-color:yellow;</string>
-    </property>
-    <property name="text">
-     <string>XXX</string>
+     <string>甲班</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Btn_parameterPanel_2">
     <property name="geometry">
      <rect>
-      <x>1220</x>
-      <y>890</y>
+      <x>940</x>
+      <y>650</y>
       <width>171</width>
       <height>51</height>
      </rect>
@@ -3734,6 +3636,126 @@ color:yellow;</string>
     </property>
     <property name="text">
      <string>运行切割</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Lab_talRoot_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>60</y>
+      <width>61</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:royalblue;
+font: 10pt &quot;微软雅黑&quot;;
+color:yellow;</string>
+    </property>
+    <property name="text">
+     <string>炉号：</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Lab_talRoot_3">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:royalblue;
+font: 10pt &quot;微软雅黑&quot;;
+color:yellow;</string>
+    </property>
+    <property name="text">
+     <string>铸机号：</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Lab_3bRange">
+    <property name="geometry">
+     <rect>
+      <x>1180</x>
+      <y>770</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <pointsize>10</pointsize>
+      <weight>9</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color:cornflowerblue;
+font: 75 10pt &quot;微软雅黑&quot;;
+color:yellow
+</string>
+    </property>
+    <property name="text">
+     <string>2406~2412</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Btn_Exit">
+    <property name="geometry">
+     <rect>
+      <x>1180</x>
+      <y>900</y>
+      <width>241</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;微软雅黑&quot;;
+background-color:red;</string>
+    </property>
+    <property name="text">
+     <string>关闭</string>
     </property>
    </widget>
   </widget>
@@ -3757,11 +3779,7 @@ color:yellow;</string>
     <property name="title">
      <string>产品设置</string>
     </property>
-    <addaction name="action"/>
-    <addaction name="action_2"/>
-    <addaction name="action_3"/>
-    <addaction name="action_12"/>
-    <addaction name="action_14"/>
+    <addaction name="Act_SetSteelData"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
@@ -3778,7 +3796,6 @@ color:yellow;</string>
     <addaction name="Act_Calibrate"/>
     <addaction name="Act_SetAlgorithm"/>
     <addaction name="Act_LocNo"/>
-    <addaction name="action_13"/>
    </widget>
    <widget class="QMenu" name="menu_5">
     <property name="title">
@@ -3808,7 +3825,7 @@ color:yellow;</string>
     <string>da</string>
    </property>
   </action>
-  <action name="action">
+  <action name="Act_SetSteelData">
    <property name="text">
     <string>定尺管理</string>
    </property>
@@ -3894,7 +3911,6 @@ color:yellow;</string>
   <tabstop>Btn_dataManagement</tabstop>
   <tabstop>Btn_fixedLengthAdjusetment</tabstop>
   <tabstop>Btn_videoParameter</tabstop>
-  <tabstop>Btn_parameterPanel</tabstop>
  </tabstops>
  <resources/>
  <connections>
