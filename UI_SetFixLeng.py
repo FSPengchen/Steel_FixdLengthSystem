@@ -27,19 +27,6 @@ class Ui_Dialog(object):
         self.label_3.setGeometry(QtCore.QRect(450, 120, 161, 41))
         self.label_3.setStyleSheet("font: 12pt \"微软雅黑\";")
         self.label_3.setObjectName("label_3")
-        self.Lne_PreClampOffset = QtWidgets.QTextEdit(Dialog)
-        self.Lne_PreClampOffset.setGeometry(QtCore.QRect(440, 170, 161, 41))
-        font = QtGui.QFont()
-        font.setFamily("微软雅黑")
-        font.setPointSize(10)
-        font.setBold(False)
-        font.setItalic(False)
-        font.setWeight(50)
-        self.Lne_PreClampOffset.setFont(font)
-        self.Lne_PreClampOffset.setStyleSheet("background-color:black;\n"
-"font: 10pt \"微软雅黑\";\n"
-"color:red;")
-        self.Lne_PreClampOffset.setObjectName("Lne_PreClampOffset")
         self.Btn__PreClampOffset = QtWidgets.QPushButton(Dialog)
         self.Btn__PreClampOffset.setGeometry(QtCore.QRect(630, 170, 141, 41))
         self.Btn__PreClampOffset.setObjectName("Btn__PreClampOffset")
@@ -119,6 +106,12 @@ class Ui_Dialog(object):
         self.Lne_WeightMax = QtWidgets.QLineEdit(Dialog)
         self.Lne_WeightMax.setGeometry(QtCore.QRect(620, 450, 81, 41))
         self.Lne_WeightMax.setObjectName("Lne_WeightMax")
+        self.Lne_PreClampOffset = QtWidgets.QLineEdit(Dialog)
+        self.Lne_PreClampOffset.setGeometry(QtCore.QRect(450, 170, 151, 41))
+        self.Lne_PreClampOffset.setStyleSheet("background-color:black;\n"
+"color:red;\n"
+"font: 14pt \"微软雅黑\"")
+        self.Lne_PreClampOffset.setObjectName("Lne_PreClampOffset")
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -129,11 +122,6 @@ class Ui_Dialog(object):
         self.label.setText(_translate("Dialog", "定尺长度（毫米):"))
         self.label_2.setText(_translate("Dialog", "断面规格(宽*高):"))
         self.label_3.setText(_translate("Dialog", "预夹紧偏移："))
-        self.Lne_PreClampOffset.setHtml(_translate("Dialog", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'微软雅黑\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">500</span></p></body></html>"))
         self.Btn__PreClampOffset.setText(_translate("Dialog", "修改预夹偏移"))
         __sortingEnabled = self.listWidget.isSortingEnabled()
         self.listWidget.setSortingEnabled(False)
@@ -154,3 +142,4 @@ class Ui_Dialog(object):
         self.label_6.setText(_translate("Dialog", "理论重量（公斤）:"))
         self.label_5.setText(_translate("Dialog", "热态密度(吨/立方米):"))
         self.Ceb_AllowEdit.setText(_translate("Dialog", "允许编辑"))
+        self.Lne_PreClampOffset.setText(_translate("Dialog", "500"))

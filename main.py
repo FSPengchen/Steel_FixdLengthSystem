@@ -1,3 +1,4 @@
+#标准类
 import pymssql
 from PyQt5.QtWidgets  import QApplication,QMainWindow,QPushButton,QPlainTextEdit,QTextBrowser,QMessageBox,QDialog
 from PyQt5.Qt import *
@@ -7,18 +8,25 @@ import datetime
 import time
 import threading        #线程
 from enum import Enum       #枚举
+
+from dbutils.pooled_db import PooledDB
 from sklearn import svm
 import cv2
 import HslCommunication
-import ConsolePLC
 from apscheduler.schedulers.blocking import BlockingScheduler   #线程定时器
-import configparser     #ini配置文件
-import logging  #日志文件
 import os
+import pymysql
+
+
+#引用类
+import ConsolePLC
+import Log
+import Config
+import ConMySQL
 
 
 
-
+#画面类
 from UI_MainPage import *
 import UI_SetFurNo
 import UI_SetLocNo
@@ -30,12 +38,9 @@ import UI_ProductionDataQuery
 import UI_SetCamera
 import UI_SetAlgorithm
 import UI_SetSteelData
-import Config
 
 
-
-
-
+list_SteelData = []
 
 class MainWindow(QMainWindow,Ui_MainWindow):
     def __init__(self,parent = None):
@@ -45,7 +50,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         tm = QTime.currentTime()    #获取当前时间
         dd = QDate.currentDate()    #获取当前日期
         strText = tm.toString("hh:mm:ss")
-        logging.info("正常开始,datetime = " + strText)
+
+        #self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  隐藏窗口
+        self.setFixedSize(1510, 1017)
+
 
         #self.Btn_FurNo.clicked.connect(self.slot_SetFurNo)     #按钮-设置炉号
         self.Btn_LocNo.clicked.connect(self.slot_SetLocNo)    #按钮-设置连铸机号
@@ -59,7 +67,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.Act_Exit.setShortcut(self.close())     #菜单栏
         self.Act_FurNo.triggered.connect(self.slot_SetFurNo)
-        self.Act_Class.triggered.connect(self.slot_SetTeam)
+
         self.Act_LocNo.triggered.connect(self.slot_SetLocNo)
         self.Act_Exit.triggered.connect(self.close) #菜单栏
         self.Act_SetAlgorithm.triggered.connect(self.slot_SetAlgorithm_triggered)   #菜单栏
@@ -69,7 +77,6 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.Btn_Exit.clicked.connect(self.close)
 
         '''恢复上次关闭数据_初始化config.ini -> init'''
-        config_ini = Config.Config()
         self.Btn_Class.setText((config_ini.readvalue('init', 'Btn_Class')))      #班次
         self.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  #总记数
         self.Lab_talTon.setText((config_ini.readvalue('init', 'Lab_talTon')))    #总重量
@@ -108,10 +115,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.Lab_4cCount.setText((config_ini.readvalue('init', 'Lab_4cCount')))  # 4流记数
 
 
+        config_ini.writeValue('init', 'smtp_vserver','sss') #测试  11810*160*160 预夹=500 定重目标=2333.0
 
-
-
-        config_ini.writeValue('init', 'smtp_vserver','sss')
 
 
         '''时间刷新'''
@@ -121,94 +126,88 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.timer.start()  #启动
 
 
-        '''视频开始'''
-
-        self.open_flag = False
-        self.Camera = cv2.VideoCapture(0)
-        #self.painter = QPainter(self)
-        self.open_flag = bool(1 - self.open_flag)
-
-
-
-    def paintEvent(self, a0: QtGui.QPaintEvent):
-        if self.open_flag:
-            ret, frame = self.Camera.read()
-
-            '''尝试1'''
-            # frame = cv2.resize(frame, (800, 600), interpolation=cv2.INTER_AREA)
-            # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            #
-            # self.Qframe = QImage(frame.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3,
-            #                      QImage.Format_RGB888)
-            #
-            # self.labelCamera.setPixmap(QPixmap.fromImage(self.Qframe))
-            # self.update()
-            '''尝试1结束'''
-
-            '''尝试2'''
-            # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # 转换为灰度图
-            # ret, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)  #二值阀图像，更好的边缘检测
-            # binary, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-            # img = cv2.drawContours(frame, contours, -1, (0, 0, 255), 2)
-            #
-            # self.Qframe = QImage(frame.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3,
-            #                      QImage.Format_RGB888)
-            #
-            # self.labelCamera.setPixmap(QPixmap.fromImage(self.Qframe))
-            # self.update()
-            '''尝试2结束'''
-        #高斯去噪
-        # blurred = cv2.GaussianBlur(gray, (9, 9),0)
-
-            '''尝试3'''
-            frame = cv2.resize(frame, (800, 600), interpolation=cv2.INTER_AREA)
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-            self.Qframe = QImage(frame.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3,
-                                 QImage.Format_RGB888)
-
-            self.labelCamera.setPixmap(QPixmap.fromImage(self.Qframe))
-            self.update()
-            '''尝试3结束'''
-
-            img4 = frame[0:150, 0:640]  # 裁剪坐标为[y0:y1, x0:x1]
-            cv2.imshow("4", img4)
-            img3 = frame[150:300, 0:640]  # 裁剪坐标为[y0:y1, x0:x1]
-            cv2.imshow("3", img3)
-            img2 = frame[300:450, 0:640]  # 裁剪坐标为[y0:y1, x0:x1]
-            cv2.imshow("2", img2)
-            img1 = frame[450:600, 0:640]  # 裁剪坐标为[y0:y1, x0:x1]
-            gray = cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
-            blurred = cv2.GaussianBlur(gray, (9, 9), 0)
-            ret, thresh = cv2.threshold(blurred, 240, 255, cv2.THRESH_BINARY)  # 二值阀图像，更好的边缘检测
-            binary, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  #轮廓
-            img1 = cv2.drawContours(img1, contours, -1, (0, 0, 255), 2)  # -1 全部轮廓画出来
-
-            #print("一共有多少个" + str(len(contours)))
-            for i in range(0,len(contours)):
-                cnt = contours[i]
-                # if cv2.contourArea(cnt) > 10.0 :
-                #     print("第" + str(i) + "个是大于要求")
-                #     print(contours[i])
-
-            # cv2.imshow("1", img1)
-
-        '''视频结束'''
+        '''笔记本摄像头开始'''
+    #
+    #     self.open_flag = False
+    #     self.Camera = cv2.VideoCapture(0)
+    #     #self.painter = QPainter(self)
+    #     self.open_flag = bool(1 - self.open_flag)
+    #
+    #     log.logger.info('程序正常开启运行')
+    #
+    # #笔记本摄像头
+    # def paintEvent(self, a0: QtGui.QPaintEvent):
+    #     if self.open_flag:
+    #         ret, frame = self.Camera.read()
+    #
+    #         '''尝试1'''
+    #         # frame = cv2.resize(frame, (800, 600), interpolation=cv2.INTER_AREA)
+    #         # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #         #
+    #         # self.Qframe = QImage(frame.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3,
+    #         #                      QImage.Format_RGB888)
+    #         #
+    #         # self.labelCamera.setPixmap(QPixmap.fromImage(self.Qframe))
+    #         # self.update()
+    #         '''尝试1结束'''
+    #
+    #         '''尝试2'''
+    #         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # 转换为灰度图
+    #         # ret, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)  #二值阀图像，更好的边缘检测
+    #         # binary, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
+    #         # img = cv2.drawContours(frame, contours, -1, (0, 0, 255), 2)
+    #         #
+    #         # self.Qframe = QImage(frame.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3,
+    #         #                      QImage.Format_RGB888)
+    #         #
+    #         # self.labelCamera.setPixmap(QPixmap.fromImage(self.Qframe))
+    #         # self.update()
+    #         '''尝试2结束'''
+    #     #高斯去噪
+    #     # blurred = cv2.GaussianBlur(gray, (9, 9),0)
+    #
+    #         '''尝试3'''
+    #         frame = cv2.resize(frame, (800, 600), interpolation=cv2.INTER_AREA)
+    #         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #
+    #         self.Qframe = QImage(frame.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3,
+    #                              QImage.Format_RGB888)
+    #
+    #         self.labelCamera.setPixmap(QPixmap.fromImage(self.Qframe))
+    #         self.update()
+    #         '''尝试3结束'''
+    #
+    #         img4 = frame[0:150, 0:640]  # 裁剪坐标为[y0:y1, x0:x1]
+    #         #cv2.imshow("4", img4)
+    #         img3 = frame[150:300, 0:640]  # 裁剪坐标为[y0:y1, x0:x1]
+    #         #cv2.imshow("3", img3)
+    #         img2 = frame[300:450, 0:640]  # 裁剪坐标为[y0:y1, x0:x1]
+    #         #cv2.imshow("2", img2)
+    #         img1 = frame[450:600, 0:640]  # 裁剪坐标为[y0:y1, x0:x1]
+    #         gray = cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
+    #         blurred = cv2.GaussianBlur(gray, (9, 9), 0)
+    #         ret, thresh = cv2.threshold(blurred, 240, 255, cv2.THRESH_BINARY)  # 二值阀图像，更好的边缘检测
+    #         binary, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)  #轮廓
+    #         img1 = cv2.drawContours(img1, contours, -1, (0, 0, 255), 2)  # -1 全部轮廓画出来
+    #
+    #         #print("一共有多少个" + str(len(contours)))
+    #         for i in range(0,len(contours)):
+    #             cnt = contours[i]
+    #             # if cv2.contourArea(cnt) > 10.0 :
+    #             #     print("第" + str(i) + "个是大于要求")
+    #             #     print(contours[i])
+    #
+    #         # cv2.imshow("1", img1)
+        '''笔记本摄像头结束'''
 
     #关闭保持数据
     def slot_close(self,event):
-        config_ini = Config.Config()
-        config_ini.writeValue('init', 'smtp_vserver', 'sss')
-        config_ini.writeValue('init', 'Lab_talRoot', '11')
-        config_ini.writeValue('init', 'Lab_talTon', '11')
-
-        # result = QtWidgets.QMessageBox.question(self, "标题", "亲，你确定想关闭我?别后悔！！！'_'",
-        #                                         QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        # if (result == QtWidgets.QMessageBox.Yes):
-        #     event.accept()
-        #     # 通知服务器的代码省略，这里不是重点...
-        # else:
-        #     event.ignore()
+        try:
+            config_ini.writeValue('init', 'smtp_vserver', 'sss')
+            config_ini.writeValue('init', 'Lab_talRoot', window.Lab_talRoot.text()) #总根数写入配置文件
+            config_ini.writeValue('init', 'Lab_talTon', window.Lab_talTon.text())   #总重量写入配置文件
+        except Exception as e :
+            print(e)
 
 
 
@@ -257,38 +256,177 @@ class FurNoPage(QDialog,UI_SetFurNo.Ui_Dialog): #炉号
     def __init__(self,parent = None):
         super(FurNoPage,self).__init__(parent)
         self.setupUi(self)
-        self.Btn_SetFurNoNo.clicked.connect(self.close)
-        self.Btn_SetFurNoYes.clicked.connect(self.slot_ChangeLocNo)
-        self.Btn_SetFurNoYes.clicked.connect(self.close)
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
+        self.Lne_SetFurNum.setValidator(QIntValidator(0,65535)) #设置输入整形数字范围
+        self.Lne_SetFurNo.setValidator(QDoubleValidator())  # 设置输入浮点数字范围
 
-    def slot_ChangeLocNo(self):                               #????????????????????限制输入
-        LocNotext = self.LabInput_SetFurNo.toPlainText()
-        window.Btn_FurNo.setText(LocNotext)
+        #显示 列表信息
+        for i in range(1,11):
+            Furstr = 'FurListData' + str(i)
+            if int(config_fur.readvalue(Furstr, 'show')) == 1 :     #判断在第几个开始显示
+                a = "炉号" + config_fur.readvalue(Furstr, 'lne_setfurno')
+                b = "根数" + config_fur.readvalue(Furstr, 'lne_setfurnum')
+                self.LW_SetFurNo.addItem( a + b )
+
+        self.Btn_Exit.clicked.connect(self.close)
+        self.Btn_addFurNum.clicked.connect(self.slot_addFurNum)     #增加项
+        self.Btn_delFurNum.clicked.connect(self.slot_delFurNum)     #删除项
+        self.LW_SetFurNo.setSelectionMode(QAbstractItemView.SingleSelection)     #单项处理
+        self.LW_SetFurNo.itemClicked.connect(self.slot_SetFurNoItemCliked)  #单击触发 提示
+        self.LW_SetFurNo.currentItemChanged.connect(self.slot_SetFurNoItemDoubleClicked)    #选中项前后字体变色
+
+
+    def slot_addFurNum(self):
+        strNo =self.Lne_SetFurNo.text()
+        strNum = self.Lne_SetFurNum.text()
+
+        if len(strNo) > 0 and len(strNum) > 0:  #判断是否输入
+            # 修改配置文件
+            for i in range(1, 11):
+                Furstr = 'FurListData' + str(i)     #配置文件中，名称
+                if int(config_fur.readvalue(Furstr, 'show')) == 0:  #
+                    config_fur.readvalue(Furstr, 'row')     #获取未显示行数
+                    config_fur.writeValue(Furstr,'lne_setfurno',self.Lne_SetFurNo.text())
+                    config_fur.writeValue(Furstr, 'lne_setfurnum', self.Lne_SetFurNum.text())
+                    config_fur.writeValue(Furstr, 'show','1')
+                    self.LW_SetFurNo.addItem('炉号:' + str(self.Lne_SetFurNo.text()) +'根数:'+ str(self.Lne_SetFurNum.text()))
+                    break
+
+
+            #数据库插入
+            FurNumstr = '炉号:' + str(self.Lne_SetFurNo.text()) +'根数:'+ str(self.Lne_SetFurNum.text())
+            try:
+                conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
+                cursor = conn.cursor()
+                cursor.execute("INSERT INTO furnum(炉号, 根数, 完成标, 时间戳,序号)VALUES (%s,%s,%s,%s,%s)",
+                               (strNo,strNum,0,QDateTime.currentDateTime().toString(("yyyy-MM-dd hh:mm:ss")),str(FurNumstr)))
+                conn.commit()
+            except Exception as e:
+                QtWidgets.QMessageBox.question(self, "提示",e,
+                                               QtWidgets.QMessageBox.Yes)
+
+        else:
+            QtWidgets.QMessageBox.question(self, "提示", "请全部输入！",
+                                           QtWidgets.QMessageBox.Yes)
+
+
+    def slot_delFurNum(self):
+        pItem = self.LW_SetFurNo.currentItem()   #得到左侧列表选中项
+        if pItem is None:
+            return
+        idx = self.LW_SetFurNo.row(pItem)   #得到项的序号  所在行 idx =>int
+        print(pItem.text())  # 所选行的文本
+        Furstr = 'FurListData' + str(idx)  # 配置文件中，名称
+        print(Furstr)
+        print(idx)  #选择行数
+        self.LW_SetFurNo.takeItem(idx)
+        print(idx)
+        if idx == 9 :   #当选择最后一列，直接隐藏
+            config_fur.writeValue('FurListData10', 'show', '0')
+        else:
+            for i in range(idx,9):
+                j = 'FurListData' + str(i + 1)
+                k = 'FurListData' + str(i + 2)
+                print('选择的第几行')
+                print(j)
+                print(k)
+                config_fur.writeValue(j, 'lne_setfurno', config_fur.readvalue(k, 'lne_setfurno'))
+                config_fur.writeValue(j, 'lne_setfurnum', config_fur.readvalue(k, 'lne_setfurnum'))
+
+            for s in range(idx + 1, 11):
+                l = 'FurListData' + str(s)  # 配置文件中，名称
+                if int(config_fur.readvalue(l, 'show')) == 0  :
+                    for j in range(s - 1,11):
+                        m = 'FurListData' + str(j)  # 配置文件中，名称
+                        config_fur.writeValue(m, 'show', '0')
+                        if j == 10 :
+                            return
+                elif int(config_fur.readvalue('FurListData10', 'show')) == 1:
+                    config_fur.writeValue('FurListData10', 'show', '0')
+                    return
+                # else:
+                #     log.logger.warning('炉号输入报错了')
+                #     return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                #数据库删除
+        # conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
+        # cursor = conn.cursor()
+        # b = 233
+        # cursor.execute("DELETE FROM furnum WHERE `序号` ='"+ str(b) +"'")
+        # conn.commit()
+
+
+    def slot_SetFurNoItemCliked(self,item):
+        ft = item.font()
+        ft.setBold(True)
+        item.setFont(ft)
+
+    def slot_SetFurNoItemDoubleClicked(self,current,previous):  #current 新选中的项  previous之前选中的项
+        #将之前选中的字体粗体恢复
+        if not (previous is None):
+            ft = previous.font()
+            ft.setBold(False)
+            previous.setFont(ft)
+
 
 class LocNoPage(QDialog,UI_SetLocNo.Ui_Dialog): #连铸机号
     def __init__(self,parent = None):
         super(LocNoPage,self).__init__(parent)
         self.setupUi(self)
+
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_LocNoNo.clicked.connect(self.close)
         self.Btn_LocNoYes.clicked.connect(self.slot_ChangeLocNo)
         self.Btn_LocNoYes.clicked.connect(self.close)
 
     def slot_ChangeLocNo(self):                               #????????????????????限制输入
-        LocNotext = self.LabInput_LocNo.toPlainText()
-        window.Btn_LocNo.setText("铸机号:" + LocNotext + "#")
+        try:
+            LocNotext = self.LabInput_LocNo.toPlainText()
+            window.Btn_LocNo.setText("铸机号:" + LocNotext + "#")
+        except Exception as e:
+            print(e)
 
 
 class FixLengPage(QDialog,UI_SetFixLeng.Ui_Dialog): #设置输入定尺
     def __init__(self,parent = None):
         super(FixLengPage,self).__init__(parent)
         self.setupUi(self)
+
+        #输入限制
+        self.Lne_FixLength.setValidator(QIntValidator(0,65535)) #设置输入整形数字范围
+        self.Lne_PreClampOffset.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
+        self.Lne_TheoryWeiht.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
+        self.Lne_Density.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
+        self.Lne_ErrRangeMinus.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
+        self.Lne_ErrRangePlus.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
+        self.Lne_LengthRangeMax.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
+        self.Lne_WeightMax.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
+        self.Lne_FixWeiht.setValidator(QDoubleValidator())  # 设置输入浮点数字范围
+
+
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_FixLengNo.clicked.connect(self.close)
-        self.Btn_FixLengYes.clicked.connect(self.slot_SaveData)
         self.Ceb_AllowEdit.stateChanged.connect(self.slot_editEnabled)
-        self.Btn_FixLengYes.clicked.connect(self.close)
+        #self.Btn_FixLengYes.clicked.connect(self.close)
         self.Lne_FixWeiht.setEnabled(False)
         self.Lne_TheoryWeiht.setEnabled(False)
         self.Lne_Density.setEnabled(False)
+        self.Btn_FixLengYes.clicked.connect(self.slot_SaveData)
+
+
 
     def slot_editEnabled(self,b):       #b勾选编辑
         self.Lne_FixWeiht.setEnabled(b)
@@ -297,17 +435,18 @@ class FixLengPage(QDialog,UI_SetFixLeng.Ui_Dialog): #设置输入定尺
         self.Lne_FixWeiht.setValidator(QIntValidator(0,300,self.Lne_FixWeiht))  #QIntValidator 整数的有效判断，范围0-300
 
     def slot_SaveData(self):
-        config_ini = Config.Config()
-
-        window.Btn_1aSetWeight.setText(self.Lne_FixLength.text())  # 1流定重设置显示
-        window.Btn_2aSetWeight.setText(self.Lne_FixLength.text())  # 2流定重设置显示
-        window.Btn_3aSetWeight.setText(self.Lne_FixLength.text())  # 3流定重设置显示
-        window.Btn_4aSetWeight.setText(self.Lne_FixLength.text())  # 4流定重设置显示
-        config_ini.writeValue('savedata', 'Lne_FixLength', self.Lne_FixLength.text())
-        config_ini.writeValue('init', 'Btn_1aSetWeight', self.Lne_FixLength.text())
-        config_ini.writeValue('init', 'Btn_2aSetWeight', self.Lne_FixLength.text())
-        config_ini.writeValue('init', 'Btn_3aSetWeight', self.Lne_FixLength.text())
-        config_ini.writeValue('init', 'Btn_4aSetWeight', self.Lne_FixLength.text())
+        if len(self.Lne_FixLength.text()) > 0 :
+            window.Btn_1aSetWeight.setText(self.Lne_FixLength.text())  # 1流定重设置显示
+            window.Btn_2aSetWeight.setText(self.Lne_FixLength.text())  # 2流定重设置显示
+            window.Btn_3aSetWeight.setText(self.Lne_FixLength.text())  # 3流定重设置显示
+            window.Btn_4aSetWeight.setText(self.Lne_FixLength.text())  # 4流定重设置显示
+            config_ini.writeValue('init', 'Btn_1aSetWeight', self.Lne_FixLength.text())
+            config_ini.writeValue('init', 'Btn_2aSetWeight', self.Lne_FixLength.text())
+            config_ini.writeValue('init', 'Btn_3aSetWeight', self.Lne_FixLength.text())
+            config_ini.writeValue('init', 'Btn_4aSetWeight', self.Lne_FixLength.text())
+        else:
+            QtWidgets.QMessageBox.question(self, "提示", "请输入定尺长度",
+                                           QtWidgets.QMessageBox.Yes)
 
 
 class TeamPage(QDialog,UI_SetTeam.Ui_Dialog): #设置班组
@@ -315,6 +454,7 @@ class TeamPage(QDialog,UI_SetTeam.Ui_Dialog): #设置班组
     def __init__(self,parent = None):
         super(TeamPage,self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_TeamNo.clicked.connect(self.close)
         self.Btn_TeamYes.clicked.connect(self.slot_ChangeLocYes)
         self.Btn_TeamYes.clicked.connect(self.close)
@@ -322,14 +462,22 @@ class TeamPage(QDialog,UI_SetTeam.Ui_Dialog): #设置班组
     def slot_ChangeLocYes(self):                               #????????????????????限制输入
         Cbb_SetTeamText = self.Cbb_SetTeam.currentText()
         window.Btn_Class.setText(Cbb_SetTeamText)   #修改窗口显示班组
-        config_ini = Config.Config()
+
         config_ini.writeValue('init', 'Btn_Class', Cbb_SetTeamText) #写入config.ini文件
+        window.Lab_talRoot.setText('0')
+        window.Lab_talTon.setText('0')
+
+        #保存该班组的总根数
+        #保持该班组的总重量
+        config_ini.writeValue('init', 'Lab_talRoot', '0')  #写入总根数为0
+        config_ini.writeValue('init', 'Lab_talTon', '0')   #写入总重量为0
 
 
 class ProductionDataPage(QDialog,UI_ProductionData.Ui_Dialog):      #生产数据
     def __init__(self,parent = None):
         super(ProductionDataPage,self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_Exit.clicked.connect(self.close)
         self.Btn_Query.clicked.connect(self.slot_ProductionDataQuery)   #按钮-查询生产数据
 
@@ -350,6 +498,7 @@ class ProductionDataQueryPage(QDialog,UI_ProductionDataQuery.Ui_Dialog):    #查
     def __init__(self,parent = None):
         super(ProductionDataQueryPage,self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         #钢坯类型下拉列表
         #addItem 当前第0条
         self.cb_lengthType.addItem("全部",self.SteelType.SteelType_all)
@@ -402,60 +551,52 @@ class AlgorithmPage(QDialog,UI_SetAlgorithm.Ui_Dialog):
     def __init__(self,parent = None):
         super(AlgorithmPage,self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
 
 class SetCameraPage(QDialog,UI_SetCamera.Ui_Dialog):
     def __init__(self,parent = None):
         super(SetCameraPage,self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_Exit.clicked.connect(self.close)
 
 class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
-
-    class SteelType(Enum):  #钢种类型枚举
-        SteelType_all = 0
-        SteelType_one = 1
-        SteelType_two = 2
-        SteelType_three = 3
-        SteelType_four = 4
 
 
     def __init__(self,parent = None):
         super(SetSteelDataPage,self).__init__(parent)
         self.setupUi(self)
+        self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_Exit.clicked.connect(self.close)
         '''**********************************************************'''
-        # self.cb.addItem("全部",self.SteelType.SteelType_all)
-        # #当前第1条
-        # self.cb_lengthType.addItem("方钢")
-        # self.cb_lengthType.setItemData(1,self.SteelType.SteelType_one)
+
+        self.LW_lengthType.setSelectionMode(QAbstractItemView.SingleSelection)  #单项
+        self.LW_lengthType.addItem("11810*160*160 预夹=500 定重目标=2333.0")
+        self.LW_lengthType.addItem("11820*160*160 预夹=500 定重目标=2335.0")
+        self.LW_lengthType.addItem("11830*160*160 预夹=500 定重目标=2337.0")
+        self.LW_lengthType.addItem("11850*160*160 预夹=500 定重目标=2341.0")
+        self.LW_lengthType.addItem("11930*160*160 预夹=500 定重目标=2357.0")
+        self.LW_lengthType.addItem("11940*160*160 预夹=500 定重目标=2359.0")
+        self.LW_lengthType.addItem("11960*160*160 预夹=500 定重目标=2363.0")
+
+        #self.LW_Left.itemClicked.connect(self.slot_leftItemCliked)  # 单击触发 提示
+
+        self.Btn_addLength.clicked.connect(MainWindow.slot_SetFixLeng)
+        self.Btn_delLength.clicked.connect(self.slot_takeItem)
+
+
+
+    def slot_takeItem(self):    #删除定尺信息
+        pItem = self.LW_lengthType.currentItem()
+        if pItem is None:
+            return
+        idx = self.LW_lengthType.row(pItem)
+        self.LW_lengthType.takeItem(idx)
 
 
 class contPLC(ConsolePLC.siemens):      #PLC通讯
     def __init__(self):
         super(contPLC,self).__init__()
-
-class linkDB():     #连接数据库
-    def __init__(self):
-        super(linkDB,self).__init__()
-
-    def linkdb(self):
-        # 数据库远程连接
-        conn = pymssql.connect(host="192.168.2.23", user="sa",
-                               password="Admin123", database="DATA", charset="utf8")
-
-        # 使用cursor()方法获取操作游标
-        cursor = conn.cursor()
-        # 查询语句
-        sql = 'select top 1 * Table_1 order by id desc'
-
-        try:
-            cursor.execute(sql)  # 游标
-            result = cursor.fetchone()  # 查询
-            print(result)
-        except:
-
-            print("连接数据库报错了！")
-        # 关闭数据库连接
 
 
 class MyWidget(QWidget):
@@ -471,10 +612,27 @@ class MyWidget(QWidget):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # 创建一个应用程序对象
-    # linkDB.linkdb() #数据库连接
-    window = MainWindow()
-    window.show()
+    #日志
+    log = Log.Logger('all.log')
+    #配置文件
+    config_ini = Config.Config(path = r"E:\PycharmProjects\FixedLengthSystem",pathconfig ='config.ini')
+    config_fur = Config.Config(path = r"E:\PycharmProjects\FixedLengthSystem",pathconfig ='FurNum.ini')
+    #连接本地数据库
+    pool = PooledDB(pymysql, 1, host='localhost', user='root', passwd='123', db='steelfixlength', port=3306)  # 5为连接池里的最少连接数
 
+    # conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
+    # cursor = conn.cursor()
+    # b = 233
+    # cursor.execute("DELETE FROM furnum WHERE `序号` ='" + str(b) + "'")
+    # print(cursor)
+    # conn.commit()
+
+
+    window = MainWindow()
+   # window.showFullScreen()    #全屏
+
+    window.show()
     sys.exit(app.exec_())  # 0是正常退出
+
     cap.release()
     cv2.destroyAllWindows()

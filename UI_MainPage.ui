@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1506</width>
-    <height>1017</height>
+    <width>1515</width>
+    <height>1018</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -3619,25 +3619,6 @@ color:yellow;</string>
      <string>甲班</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="Btn_parameterPanel_2">
-    <property name="geometry">
-     <rect>
-      <x>940</x>
-      <y>650</y>
-      <width>171</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 12pt &quot;微软雅黑&quot;;</string>
-    </property>
-    <property name="text">
-     <string>运行切割</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="Lab_talRoot_2">
     <property name="geometry">
      <rect>
@@ -3755,7 +3736,7 @@ color:yellow
 background-color:red;</string>
     </property>
     <property name="text">
-     <string>关闭</string>
+     <string>退出</string>
     </property>
    </widget>
   </widget>
@@ -3764,7 +3745,7 @@ background-color:red;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1506</width>
+     <width>1515</width>
      <height>26</height>
     </rect>
    </property>
@@ -3780,13 +3761,6 @@ background-color:red;</string>
      <string>产品设置</string>
     </property>
     <addaction name="Act_SetSteelData"/>
-   </widget>
-   <widget class="QMenu" name="menu_3">
-    <property name="title">
-     <string>班组</string>
-    </property>
-    <addaction name="action_4"/>
-    <addaction name="Act_Class"/>
    </widget>
    <widget class="QMenu" name="menu_4">
     <property name="title">
@@ -3806,7 +3780,6 @@ background-color:red;</string>
    <addaction name="menu"/>
    <addaction name="menu_4"/>
    <addaction name="menu_2"/>
-   <addaction name="menu_3"/>
    <addaction name="menu_5"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
