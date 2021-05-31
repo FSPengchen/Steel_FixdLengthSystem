@@ -85,12 +85,12 @@
    </property>
    <item>
     <property name="text">
-     <string>120*120</string>
+     <string>160*160</string>
     </property>
    </item>
    <item>
     <property name="text">
-     <string>111</string>
+     <string>120*120</string>
     </property>
    </item>
   </widget>
@@ -200,7 +200,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>确定</string>
+    <string>新增</string>
    </property>
   </widget>
   <widget class="QPushButton" name="Btn_FixLengNo">

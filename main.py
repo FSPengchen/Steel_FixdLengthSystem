@@ -67,11 +67,11 @@ class MainWindow(QMainWindow,Ui_MainWindow):
 
         self.Act_Exit.setShortcut(self.close())     #菜单栏
         self.Act_FurNo.triggered.connect(self.slot_SetFurNo)
-
         self.Act_LocNo.triggered.connect(self.slot_SetLocNo)
         self.Act_Exit.triggered.connect(self.close) #菜单栏
         self.Act_SetAlgorithm.triggered.connect(self.slot_SetAlgorithm_triggered)   #菜单栏
         self.Act_SetSteelData.triggered.connect(self.slot_SetSteelData)   #菜单栏 定尺管理
+        self.Act_Help.triggered.connect(self.slot_Help)
 
         self.Btn_Exit.clicked.connect(self.slot_close)
         self.Btn_Exit.clicked.connect(self.close)
@@ -242,6 +242,9 @@ class MainWindow(QMainWindow,Ui_MainWindow):
     def slot_SetSteelData(self):        #定尺管理
         steeldata = SetSteelDataPage()
         steeldata.exec_()
+    def slot_Help(self):
+        QtWidgets.QMessageBox.question(self, "帮助", "联系计控室",
+                                                     QtWidgets.QMessageBox.Yes )
 
     # def closeEvent(self, event):
     #     result = QtWidgets.QMessageBox.question(self, "标题", "亲，你确定想关闭我?别后悔！！！'_'",
@@ -289,21 +292,22 @@ class FurNoPage(QDialog,UI_SetFurNo.Ui_Dialog): #炉号
                     config_fur.writeValue(Furstr,'lne_setfurno',self.Lne_SetFurNo.text())
                     config_fur.writeValue(Furstr, 'lne_setfurnum', self.Lne_SetFurNum.text())
                     config_fur.writeValue(Furstr, 'show','1')
-                    self.LW_SetFurNo.addItem('炉号:' + str(self.Lne_SetFurNo.text()) +'根数:'+ str(self.Lne_SetFurNum.text()))
+                    self.LW_SetFurNo.addItem('炉号' + str(self.Lne_SetFurNo.text()) +'根数'+ str(self.Lne_SetFurNum.text()))
                     break
 
-
+            '''数据库插入'''
             #数据库插入
-            FurNumstr = '炉号:' + str(self.Lne_SetFurNo.text()) +'根数:'+ str(self.Lne_SetFurNum.text())
-            try:
-                conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
-                cursor = conn.cursor()
-                cursor.execute("INSERT INTO furnum(炉号, 根数, 完成标, 时间戳,序号)VALUES (%s,%s,%s,%s,%s)",
-                               (strNo,strNum,0,QDateTime.currentDateTime().toString(("yyyy-MM-dd hh:mm:ss")),str(FurNumstr)))
-                conn.commit()
-            except Exception as e:
-                QtWidgets.QMessageBox.question(self, "提示",e,
-                                               QtWidgets.QMessageBox.Yes)
+
+            # FurNumstr = '炉号:' + str(self.Lne_SetFurNo.text()) +'根数:'+ str(self.Lne_SetFurNum.text())
+            # try:
+            #     conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
+            #     cursor = conn.cursor()
+            #     cursor.execute("INSERT INTO furnum(炉号, 根数, 完成标, 时间戳,序号)VALUES (%s,%s,%s,%s,%s)",
+            #                    (strNo,strNum,0,QDateTime.currentDateTime().toString(("yyyy-MM-dd hh:mm:ss")),str(FurNumstr)))
+            #     conn.commit()
+            # except Exception as e:
+            #     QtWidgets.QMessageBox.question(self, "提示",e,
+            #                                    QtWidgets.QMessageBox.Yes)
 
         else:
             QtWidgets.QMessageBox.question(self, "提示", "请全部输入！",
@@ -315,21 +319,16 @@ class FurNoPage(QDialog,UI_SetFurNo.Ui_Dialog): #炉号
         if pItem is None:
             return
         idx = self.LW_SetFurNo.row(pItem)   #得到项的序号  所在行 idx =>int
-        print(pItem.text())  # 所选行的文本
-        Furstr = 'FurListData' + str(idx)  # 配置文件中，名称
-        print(Furstr)
-        print(idx)  #选择行数
+        # print(pItem.text())  # 所选行的文本
+        # Furstr = 'FurListData' + str(idx)  # 配置文件中，名称
+        # print(idx)  #选择行数
         self.LW_SetFurNo.takeItem(idx)
-        print(idx)
         if idx == 9 :   #当选择最后一列，直接隐藏
             config_fur.writeValue('FurListData10', 'show', '0')
         else:
             for i in range(idx,9):
                 j = 'FurListData' + str(i + 1)
                 k = 'FurListData' + str(i + 2)
-                print('选择的第几行')
-                print(j)
-                print(k)
                 config_fur.writeValue(j, 'lne_setfurno', config_fur.readvalue(k, 'lne_setfurno'))
                 config_fur.writeValue(j, 'lne_setfurnum', config_fur.readvalue(k, 'lne_setfurnum'))
 
@@ -344,18 +343,6 @@ class FurNoPage(QDialog,UI_SetFurNo.Ui_Dialog): #炉号
                 elif int(config_fur.readvalue('FurListData10', 'show')) == 1:
                     config_fur.writeValue('FurListData10', 'show', '0')
                     return
-                # else:
-                #     log.logger.warning('炉号输入报错了')
-                #     return
-
-
-
-
-
-
-
-
-
 
 
 
@@ -428,6 +415,7 @@ class FixLengPage(QDialog,UI_SetFixLeng.Ui_Dialog): #设置输入定尺
 
 
 
+
     def slot_editEnabled(self,b):       #b勾选编辑
         self.Lne_FixWeiht.setEnabled(b)
         self.Lne_TheoryWeiht.setEnabled(b)
@@ -435,18 +423,66 @@ class FixLengPage(QDialog,UI_SetFixLeng.Ui_Dialog): #设置输入定尺
         self.Lne_FixWeiht.setValidator(QIntValidator(0,300,self.Lne_FixWeiht))  #QIntValidator 整数的有效判断，范围0-300
 
     def slot_SaveData(self):
-        if len(self.Lne_FixLength.text()) > 0 :
-            window.Btn_1aSetWeight.setText(self.Lne_FixLength.text())  # 1流定重设置显示
-            window.Btn_2aSetWeight.setText(self.Lne_FixLength.text())  # 2流定重设置显示
-            window.Btn_3aSetWeight.setText(self.Lne_FixLength.text())  # 3流定重设置显示
-            window.Btn_4aSetWeight.setText(self.Lne_FixLength.text())  # 4流定重设置显示
-            config_ini.writeValue('init', 'Btn_1aSetWeight', self.Lne_FixLength.text())
-            config_ini.writeValue('init', 'Btn_2aSetWeight', self.Lne_FixLength.text())
-            config_ini.writeValue('init', 'Btn_3aSetWeight', self.Lne_FixLength.text())
-            config_ini.writeValue('init', 'Btn_4aSetWeight', self.Lne_FixLength.text())
+        if len(self.Lne_FixLength.text()) > 0 \
+                and len(self.Lne_FixWeiht.text()) > 0  \
+                and len(self.Lne_Density.text()) > 0 \
+                and len(self.Lne_ErrRangeMinus.text()) > 0 \
+                and len(self.Lne_ErrRangePlus.text()) > 0 \
+                and len(self.Lne_PreClampOffset.text()) > 0 \
+                and len(self.Lne_TheoryWeiht.text()) > 0 \
+                and len(self.Lne_LengthRangeMax.text()) > 0 \
+                and len(self.Lne_WeightMax.text()) > 0 :
+               try:
+                    window.Btn_1aSetWeight.setText(self.Lne_FixLength.text())  # 1流定重设置显示
+                    window.Btn_2aSetWeight.setText(self.Lne_FixLength.text())  # 2流定重设置显示
+                    window.Btn_3aSetWeight.setText(self.Lne_FixLength.text())  # 3流定重设置显示
+                    window.Btn_4aSetWeight.setText(self.Lne_FixLength.text())  # 4流定重设置显示
+                    config_ini.writeValue('init', 'Btn_1aSetWeight', self.Lne_FixLength.text())
+                    config_ini.writeValue('init', 'Btn_2aSetWeight', self.Lne_FixLength.text())
+                    config_ini.writeValue('init', 'Btn_3aSetWeight', self.Lne_FixLength.text())
+                    config_ini.writeValue('init', 'Btn_4aSetWeight', self.Lne_FixLength.text())
+
+                    SQLname = str(self.Lne_FixLength.text()) + ' 预夹=' + str(self.Lne_PreClampOffset.text()) + ' 定重目标=' + str(self.Lne_FixWeiht.text())
+                    print(SQLname)
+
+
+                    conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
+                    cursor = conn.cursor()
+                    cursor.execute("INSERT INTO fixsteeldata ("
+                                   "SteelName, "    #定长名称
+                                   "FixLength,"     #定长
+                                   "FixWeiht,"      #定长重量
+                                   "Density,"       #密度
+                                   "ErrRangeMinus," #误差范围负
+                                   "ErrRangePlus,"  #误差范围正
+                                   "PreClampOffset,"    #预夹
+                                   "TheoryWeiht,"   #理论重量
+                                   "LengthRangeMax,"  #最大调节范围   
+                                   "WeightMax ) "       #对应重量
+                                   
+                                   " VALUES ("+"'" +
+                                   SQLname + "','" +
+                                   self.Lne_FixLength.text()  +"','"+
+                                   self.Lne_FixWeiht.text() +"','" +
+                                   self.Lne_Density.text() +"','" +
+                                   self.Lne_ErrRangeMinus.text() + "','"+
+                                   self.Lne_ErrRangePlus.text() +"','" +
+                                   self.Lne_PreClampOffset.text() +"','" +
+                                   self.Lne_TheoryWeiht.text() +"','" +
+                                   self.Lne_LengthRangeMax.text() + "','"+
+                                   self.Lne_WeightMax.text() +"');")
+                    conn.commit()
+
+               except Exception as e :
+                   print(e)
+                   QtWidgets.QMessageBox.question(self, "错误",e,
+                                                  QtWidgets.QMessageBox.Yes)
+
         else:
-            QtWidgets.QMessageBox.question(self, "提示", "请输入定尺长度",
-                                           QtWidgets.QMessageBox.Yes)
+                    QtWidgets.QMessageBox.question(self, "提示", "请输入参数",
+                                                   QtWidgets.QMessageBox.Yes)
+
+
 
 
 class TeamPage(QDialog,UI_SetTeam.Ui_Dialog): #设置班组
@@ -568,22 +604,85 @@ class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
         self.setupUi(self)
         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_Exit.clicked.connect(self.close)
+        self.Btn_addLength.clicked.connect(self.slot_addLength)
+        self.Btn_delLength.clicked.connect(self.slot_delLength)
         '''**********************************************************'''
 
-        self.LW_lengthType.setSelectionMode(QAbstractItemView.SingleSelection)  #单项
-        self.LW_lengthType.addItem("11810*160*160 预夹=500 定重目标=2333.0")
-        self.LW_lengthType.addItem("11820*160*160 预夹=500 定重目标=2335.0")
-        self.LW_lengthType.addItem("11830*160*160 预夹=500 定重目标=2337.0")
-        self.LW_lengthType.addItem("11850*160*160 预夹=500 定重目标=2341.0")
-        self.LW_lengthType.addItem("11930*160*160 预夹=500 定重目标=2357.0")
-        self.LW_lengthType.addItem("11940*160*160 预夹=500 定重目标=2359.0")
-        self.LW_lengthType.addItem("11960*160*160 预夹=500 定重目标=2363.0")
+        # 数据库查询
+
+        try:
+            conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
+            cursor = conn.cursor()
+            sql = 'SELECT * FROM `fixsteeldata`'
+            cursor.execute(sql)
+            conn.commit()
+            data =cursor.fetchall()
+
+            # if data:
+            #     # self.TW_lengthType.setRowCount(0)
+            #     # self.TW_lengthType.insertRow(0)
+            #     for row,form in enumerate(data):
+            #         print(row,form[0])
+            #         # for column,item in enumerate(form[0]):
+            #         #     self.TW_lengthType.setItem(row,column,QTableWidgetItem(str(form[0])))
+            #         #     column += 1
+            #         #     print(row,form[0])
+            #
+            #         self.TW_lengthType.setItem(row, 0, QTableWidgetItem(str(form[0])))
+            #         row_position = self.TW_lengthType.rowCount()
+            #         print('row_position')
+            #         print(row_position)
+            #         self.TW_lengthType.insertRow(row_position)
+
+
+            if data:
+                for row,form in enumerate(data):
+                    # for column,item in enumerate(form[0]):
+                    #     self.TW_lengthType.setItem(row,column,QTableWidgetItem(str(form[0])))
+                    #     column += 1
+                    #     print(row,form[0])
+
+                    self.LW_lengthType.addItem(str(form[0]))
+
+        except Exception as e:
+            QtWidgets.QMessageBox.question(self, "提示",e,
+                                           QtWidgets.QMessageBox.Yes)
+
+    def slot_addLength(self):
+        Fixleng = FixLengPage()
+        Fixleng.exec_()
+
+    def slot_delLength(self):
+        try:
+            pItem = self.LW_lengthType.currentItem()  # 得到左侧列表选中项
+            if pItem is None:
+                return
+            idx = self.LW_lengthType.row(pItem)  # 得到项的序号  所在行 idx =>int
+            # print(pItem.text())  # 所选行的文本
+            # print(idx)  #选择行数
+            self.LW_lengthType.takeItem(idx)
+
+            conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
+            cursor = conn.cursor()
+            sql = "DELETE FROM fixsteeldata WHERE SteelName = '" + pItem.text() +"';"
+            cursor.execute(sql)
+            conn.commit()
+
+        except Exception as e:
+            QtWidgets.QMessageBox.question(self, "提示",e,
+                                           QtWidgets.QMessageBox.Yes)
+
+    def slot_changelength(self):    #修改
+        pass
+
+    def slot_switchlength(self):    #切换
+        pass
+
 
         #self.LW_Left.itemClicked.connect(self.slot_leftItemCliked)  # 单击触发 提示
 
         self.Btn_addLength.clicked.connect(MainWindow.slot_SetFixLeng)
         self.Btn_delLength.clicked.connect(self.slot_takeItem)
-
 
 
     def slot_takeItem(self):    #删除定尺信息

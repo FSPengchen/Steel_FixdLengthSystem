@@ -3775,7 +3775,7 @@ background-color:red;</string>
     <property name="title">
      <string>帮助</string>
     </property>
-    <addaction name="action_7"/>
+    <addaction name="Act_Help"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_4"/>
@@ -3828,7 +3828,7 @@ background-color:red;</string>
     <string>算法设置</string>
    </property>
   </action>
-  <action name="action_7">
+  <action name="Act_Help">
    <property name="text">
     <string>关于</string>
    </property>
