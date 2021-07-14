@@ -2,16 +2,15 @@ import os
 import configparser
 
 class Config():
-    def __init__(self):
-        self.path = r"E:\PycharmProjects\FixedLengthSystem"
-        self.pathconfig =r'E:\PycharmProjects\FixedLengthSystem\config.ini'
-        print('初始化')
+    def __init__(self,path,pathconfig):
+        self.path = path
+        self.pathconfig = pathconfig
 
     def readTest(self):
         os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
         cf = configparser.ConfigParser()
         # read(filename) 读文件内容
-        filename = cf.read("config.ini", encoding="utf-8")
+        filename = cf.read(self.pathconfig, encoding="utf-8")
         print(filename)
 
         # sections() 得到所有的section，以列表形式返回
@@ -79,7 +78,7 @@ class Config():
         cf.set("kafka", "user", "xiaozhang")
         cf.add_section("kka")
         # write to file
-        with open("config1.ini", "w+") as f:
+        with open(self.pathconfig, "w+") as f:
             cf.write(f)
 
     def writeValue(self,section,option,value,encoding = "utf-8"):
@@ -89,7 +88,7 @@ class Config():
         cf.read(self.pathconfig,encoding)
         cf.set(section,option,value)
 
-        with open("config.ini","r+",encoding= "utf-8") as f:
+        with open(self.pathconfig,"r+",encoding= "utf-8") as f:
             cf.write(f)
 
 
@@ -99,7 +98,7 @@ class Config():
         os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
         cf = configparser.ConfigParser()
         cf.add_section(section)
-        with open("config1.ini", "w+") as f:
+        with open(self.pathconfig, "w+") as f:
             cf.write(f)
 
     '''
@@ -111,17 +110,24 @@ class Config():
     '''
 
     def writeChangeTest(self):
-        os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
-        cf = configparser.ConfigParser()
-        # 修改配置文件的内容
-        # remove_section(section)  删除某个section的数值
-        # remove_option(section,option) 删除某个section下的option的数值
-        cf.read("config1.ini")
-        cf.remove_option("kafka", "user")
-        cf.remove_section("mq")
-        # write to file
-        with open("config1.ini", "w+") as f:
-            cf.write(f)
+        try:
+            os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
+        except FileNotFoundError:
+            print("未找到该文件")
+        else:
+            cf = configparser.ConfigParser()
+            # 修改配置文件的内容
+            # remove_section(section)  删除某个section的数值
+            # remove_option(section,option) 删除某个section下的option的数值
+            cf.read(self.pathconfig)
+            cf.remove_option("kafka", "user")
+            cf.remove_section("mq")
+            # write to file
+        try:
+            with open(self.pathconfig, "w+") as f:
+                cf.write(f)
+        except FileNotFoundError:
+            print("未找到该文件")
 
     '''
     cf.read(filename)：读取文件（这里需要注意的是：一定要先读取文件，再进行修改）
@@ -137,7 +143,10 @@ class Config():
 if __name__ == "__main__":
     config = Config()
     #config.writeValue('init', 'smtp_vserver','啊 啊')
-    #print(config.readvalue('init', 'smtp_vserver'))
+    ubu = config.readvalue('init', 'smtp_vserver')
+    print(ubu,type(ubu))
+
+
 
 
 
