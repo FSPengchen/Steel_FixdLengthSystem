@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>40</y>
+     <y>20</y>
      <width>81</width>
      <height>16</height>
     </rect>
@@ -26,12 +26,12 @@
     <string>调整摄像机</string>
    </property>
   </widget>
-  <widget class="QSlider" name="horizontalSlider_2">
+  <widget class="QSlider" name="horizontalSlider_Contrast">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>210</y>
-     <width>301</width>
+     <x>100</x>
+     <y>120</y>
+     <width>491</width>
      <height>22</height>
     </rect>
    </property>
@@ -39,50 +39,24 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QSlider" name="horizontalSlider_3">
+  <widget class="QSlider" name="horizontalSlider_Light">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>140</y>
-     <width>301</width>
+     <x>100</x>
+     <y>70</y>
+     <width>491</width>
      <height>22</height>
     </rect>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>140</y>
-     <width>91</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>水平镜像</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_2">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>210</y>
-     <width>91</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>垂直镜像</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>590</x>
-     <y>140</y>
+     <x>630</x>
+     <y>70</y>
      <width>81</width>
      <height>16</height>
     </rect>
@@ -91,14 +65,14 @@
     <string notr="true">background-color :red</string>
    </property>
    <property name="text">
-    <string>亮度：0</string>
+    <string>亮度：</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>590</x>
-     <y>210</y>
+     <x>630</x>
+     <y>120</y>
      <width>91</width>
      <height>20</height>
     </rect>
@@ -113,8 +87,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>140</y>
+     <x>750</x>
+     <y>70</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -126,8 +100,8 @@
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>210</y>
+     <x>750</x>
+     <y>120</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -139,8 +113,8 @@
   <widget class="QPushButton" name="Btn_Exit">
    <property name="geometry">
     <rect>
-     <x>720</x>
-     <y>290</y>
+     <x>750</x>
+     <y>250</y>
      <width>93</width>
      <height>28</height>
     </rect>
@@ -148,6 +122,283 @@
    <property name="text">
     <string>退出</string>
    </property>
+  </widget>
+  <widget class="QPushButton" name="Btn_SaveData">
+   <property name="geometry">
+    <rect>
+     <x>750</x>
+     <y>180</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="Lab_LightValue">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>70</y>
+     <width>31</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color :red</string>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>250</y>
+     <width>619</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label_41">
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string> 0:水平翻转  1:垂直翻转  -1:全翻转  2:不翻转</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="Lne_SetCameraFlip">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>160</y>
+     <width>505</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0" rowspan="2">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label_37">
+        <property name="styleSheet">
+         <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+        </property>
+        <property name="text">
+         <string>1流阈值:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="Lne_Threshold_f1">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label_38">
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>2流阈值:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_39">
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>3流阈值:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QLabel" name="label_40">
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>4流阈值:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="Lne_Threshold_f2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="Lne_Threshold_f3">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QLineEdit" name="Lne_Threshold_f4">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
