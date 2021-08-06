@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>784</width>
-    <height>508</height>
+    <width>794</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,9 +27,6 @@
    </property>
    <property name="text">
     <string>定尺长度（毫米):</string>
-   </property>
-   <property name="buddy">
-    <cstring>Lne_FixLength</cstring>
    </property>
   </widget>
   <widget class="QLabel" name="label_3">
@@ -74,7 +71,7 @@
     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
    </property>
    <property name="text">
-    <string>合格误差范围（公斤）:</string>
+    <string>合格误差范围（公斤）:(&amp;4)</string>
    </property>
    <property name="buddy">
     <cstring>Lne_ErrRangeMinus</cstring>
@@ -141,7 +138,7 @@
     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
    </property>
    <property name="text">
-    <string>容许最大调节长度范围（毫米）:</string>
+    <string>容许最大调节长度范围（毫米）:(&amp;5)</string>
    </property>
    <property name="buddy">
     <cstring>Lne_LengthRangeMax</cstring>
@@ -160,10 +157,7 @@
     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
    </property>
    <property name="text">
-    <string>对应重量（公斤）:</string>
-   </property>
-   <property name="buddy">
-    <cstring>Lne_WeightMax</cstring>
+    <string>对应重量（公斤）:(&amp;7)</string>
    </property>
   </widget>
   <widget class="QPushButton" name="Btn_FixLengYes">
@@ -176,7 +170,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>新增</string>
+    <string>修改</string>
    </property>
   </widget>
   <widget class="QPushButton" name="Btn_FixLengNo">
@@ -205,7 +199,7 @@
     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
    </property>
    <property name="text">
-    <string>定重（公斤）：</string>
+    <string>定重（公斤）:(&amp;1)</string>
    </property>
    <property name="buddy">
     <cstring>Lne_FixWeiht</cstring>
@@ -224,7 +218,7 @@
     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
    </property>
    <property name="text">
-    <string>理论重量（公斤）:</string>
+    <string>理论重量（公斤）:(&amp;2)</string>
    </property>
    <property name="buddy">
     <cstring>Lne_TheoryWeiht</cstring>
@@ -243,7 +237,7 @@
     <string notr="true">font: 10pt &quot;微软雅黑&quot;;</string>
    </property>
    <property name="text">
-    <string>热态密度(吨/立方米):</string>
+    <string>热态密度(吨/立方米):(&amp;3)</string>
    </property>
    <property name="buddy">
     <cstring>Lne_Density</cstring>
@@ -261,6 +255,12 @@
    <property name="text">
     <string>允许编辑</string>
    </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
   </widget>
   <widget class="QLineEdit" name="Lne_FixWeiht">
    <property name="geometry">
@@ -273,6 +273,9 @@
    </property>
   </widget>
   <widget class="QLineEdit" name="Lne_TheoryWeiht">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>230</x>
@@ -283,20 +286,13 @@
    </property>
   </widget>
   <widget class="QLineEdit" name="Lne_Density">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>230</x>
      <y>230</y>
-     <width>151</width>
-     <height>41</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="Lne_FixLength">
-   <property name="geometry">
-    <rect>
-     <x>210</x>
-     <y>20</y>
      <width>151</width>
      <height>41</height>
     </rect>
@@ -335,9 +331,9 @@
   <widget class="QLineEdit" name="Lne_WeightMax">
    <property name="geometry">
     <rect>
-     <x>620</x>
+     <x>650</x>
      <y>360</y>
-     <width>81</width>
+     <width>111</width>
      <height>41</height>
     </rect>
    </property>
@@ -360,7 +356,127 @@ font: 14pt &quot;微软雅黑&quot;</string>
     <string>500</string>
    </property>
   </widget>
+  <widget class="QLabel" name="Lab_ReadLeng">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>20</y>
+     <width>161</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>20</pointsize>
+     <weight>50</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 20pt &quot;微软雅黑&quot;;</string>
+   </property>
+   <property name="text">
+    <string>10000</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>480</y>
+     <width>161</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 12pt &quot;微软雅黑&quot;;</string>
+   </property>
+   <property name="text">
+    <string>快捷键 alt + 数字</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="Ceb_AllowEdit_2">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>90</y>
+     <width>91</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>显示/隐藏</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
  </widget>
+ <tabstops>
+  <tabstop>Ceb_AllowEdit</tabstop>
+  <tabstop>Lne_FixWeiht</tabstop>
+  <tabstop>Lne_TheoryWeiht</tabstop>
+  <tabstop>Lne_Density</tabstop>
+  <tabstop>Lne_PreClampOffset</tabstop>
+  <tabstop>Btn__PreClampOffset</tabstop>
+  <tabstop>Lne_ErrRangeMinus</tabstop>
+  <tabstop>Lne_ErrRangePlus</tabstop>
+  <tabstop>Lne_LengthRangeMax</tabstop>
+  <tabstop>Lne_WeightMax</tabstop>
+  <tabstop>Btn_FixLengYes</tabstop>
+  <tabstop>Btn_FixLengNo</tabstop>
+ </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>Ceb_AllowEdit_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Lne_TheoryWeiht</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>162</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>249</x>
+     <y>202</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Ceb_AllowEdit</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Lne_Density</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>84</x>
+     <y>98</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>238</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Ceb_AllowEdit</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>Lne_TheoryWeiht</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>107</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>241</x>
+     <y>192</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
