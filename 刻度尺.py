@@ -47,7 +47,7 @@ def scale_line(img, pt1, pt2, before, after, color=(255, 0, 0), thickness=1, lin
 
 img = np.zeros((600, 900, 3), np.uint8)
 
-scale_line(img, pt1=(40, 50), pt2=(500, 100), before=20, after=10)
+scale_line(img, pt1=(40, 50), pt2=(200, 60), before=20, after=10)
 
 cv2.imshow('a', img)
 

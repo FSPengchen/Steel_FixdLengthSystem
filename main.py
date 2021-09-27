@@ -25,7 +25,6 @@ from HslCommunication import SiemensS7Net
 from HslCommunication import SiemensPLCS
 from concurrent.futures import ThreadPoolExecutor
 import SerialPortHelper
-import ConMySQL
 import Config
 # import Casting_Region
 
@@ -120,7 +119,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.Synchronizer_timer = QTimer()    # 设定时间周期线程
         self.Synchronizer_timer.timeout.connect(self.slot_Synchronizer_timer)
-        self.Synchronizer_timer.setInterval(300000)    # 设置定时周期，超出周期启动timeout函数
+        self.Synchronizer_timer.setInterval(500000)    # 设置定时周期，超出周期启动timeout函数
         self.Synchronizer_timer.start()  # 启动
 
 
@@ -201,7 +200,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # 照片查看
                 self.labelCamera.resize(900, 480)    # 存放图片位置
                 self.frame = cv2.imread(
-                "pictrue\\FT-G2F202-9.bmp")
+                "pictrue\\FT-G2F202-9.bmp"
+                )
 
             if int(config_ini.readvalue('setcamre', 'flip')) < 2:  # 判断标识是否翻转
                 self.frame = cv2.flip(self.frame,
@@ -238,6 +238,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             frame_cut = cv2.resize(frame_cut, (int((config_ini.readvalue('setcamre', 'reframe_x'))), int((config_ini.readvalue('setcamre', 'reframe_y')))), interpolation=cv2.INTER_AREA)  #重新定义显示尺寸
             frame_cut = cv2.cvtColor(frame_cut, cv2.COLOR_BGR2RGB)  # 重新定义显示通道
 
+
+
             # 1流实例化图像处理
 
             frameCut_return_f1 = Frame_Cut_Temp.frameCut(
@@ -251,7 +253,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 frame_cut_angle=config_ini.readvalue('setcamre', 'frame_cut_f1_angle'),
                 setcutlimt=config_ini.readvalue('setcamre', 'setcutlimt_f1'),
                 threshold=int(config_ini.readvalue('setcamre', 'threshold_f1')),
-                Start_Cut_state=public['Start_Cut_state_F1']
+                Start_Cut_state=public['Start_Cut_state_F1'],
+                pullspeed= public['plc_1f_pullspeed'],
+                threshold_ratio=0.4
             )
 
             window.Lab_1cState.setText(frameCut_return_f1['Lab_fcState'])
@@ -260,6 +264,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # print(frameCut_return_f1)
             # 只有开始第一周期执行
             if frameCut_return_f1['Start_Cut_state_F'] == True:
+                print('1流切割')
                 # 增加流次计数量
                 config_ini.writeValue('init', 'Lab_1cCount',
                                       str(int(config_ini.readvalue('init', 'Lab_1cCount')) + 1))
@@ -272,16 +277,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 MainWindow.slot_CutToSQL(self,
                     FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
                     FlowNum="1",  # 流号
-                    FixLength=str(window.Lab_4cSetLength.text()),  # 定尺长度
+                    FixLength=str(window.Lab_1cSetLength.text()),  # 定尺长度
                     Team=str(window.Btn_Class.text()),  # 班组
-                    SteelType=str(window.Lab_4cSteels.text()),  # 钢种
-                    RealWeight=str(window.Lab_4cWeight.text()),  # 真实重量
+                    SteelType=str(window.Lab_1cSteels.text()),  # 钢种
+                    RealWeight=str(window.Lab_1cWeight.text()),  # 真实重量
                     Weighing="否",  # 是否称重
                     SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
                     IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
-                    adjustment=str(window.Lab_4cCompensate.text()),  # 补偿值
+                    adjustment=str(window.Lab_1cCompensate.text()),  # 补偿值
                     density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),  # 读取数据库里的钢种密度
-                    theoryWeight=str(window.Lab_4bWeight.text())  # 理论重量
+                    theoryWeight=str(window.Lab_1bWeight.text())  # 理论重量
                 )
                 # 传给PLC  给M区变量1个值来判断切割
 
@@ -299,7 +304,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 frame_cut_angle=config_ini.readvalue('setcamre', 'frame_cut_f2_angle'),
                 setcutlimt=config_ini.readvalue('setcamre', 'setcutlimt_f2'),
                 threshold=int(config_ini.readvalue('setcamre', 'threshold_f2')),
-                Start_Cut_state=public['Start_Cut_state_F2']
+                Start_Cut_state=public['Start_Cut_state_F2'],
+                pullspeed = public['plc_2f_pullspeed'],
+                threshold_ratio=0.4
             )
 
             window.Lab_2cState.setText(frameCut_return_f2['Lab_fcState'])
@@ -308,6 +315,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # print(frameCut_return_f1)
             # 只有开始第一周期执行
             if frameCut_return_f2['Start_Cut_state_F'] == True:
+                print('2流切割')
                 # 增加流次计数量
                 config_ini.writeValue('init', 'Lab_2cCount',
                                       str(int(config_ini.readvalue('init', 'Lab_2cCount')) + 1))
@@ -316,6 +324,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 config_ini.writeValue('init', 'Lab_talRoot',
                                       str(int(config_ini.readvalue('init', 'Lab_talRoot')) + 1))
                 window.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
+
+                MainWindow.slot_CutToSQL(self,
+                    FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
+                    FlowNum="2",  # 流号
+                    FixLength=str(window.Lab_2cSetLength.text()),  # 定尺长度
+                    Team=str(window.Btn_Class.text()),  # 班组
+                    SteelType=str(window.Lab_2cSteels.text()),  # 钢种
+                    RealWeight=str(window.Lab_2cWeight.text()),  # 真实重量
+                    Weighing="否",  # 是否称重
+                    SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
+                    IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
+                    adjustment=str(window.Lab_2cCompensate.text()),  # 补偿值
+                    density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),  # 读取数据库里的钢种密度
+                    theoryWeight=str(window.Lab_2bWeight.text())  # 理论重量
+                )
+                # 传给PLC  给M区变量1个值来判断切割
 
             # 3流实例化图像处理
             frameCut_return_f3 = Frame_Cut_Temp.frameCut(
@@ -329,7 +353,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 frame_cut_angle=config_ini.readvalue('setcamre', 'frame_cut_f3_angle'),
                 setcutlimt=config_ini.readvalue('setcamre', 'setcutlimt_f3'),
                 threshold=int(config_ini.readvalue('setcamre', 'threshold_f3')),
-                Start_Cut_state=public['Start_Cut_state_F3']
+                Start_Cut_state=public['Start_Cut_state_F3'],
+                pullspeed=public['plc_3f_pullspeed'],
+                threshold_ratio=0.4
             )
 
             window.Lab_3cState.setText(frameCut_return_f3['Lab_fcState'])
@@ -338,14 +364,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # print(frameCut_return_f1)
             # 只有开始第一周期执行
             if frameCut_return_f3['Start_Cut_state_F'] == True:
+                print('3流切割')
                 # 增加流次计数量
-                config_ini.writeValue('init', 'Lab_2cCount',
+                config_ini.writeValue('init', 'Lab_3cCount',
                                       str(int(config_ini.readvalue('init', 'Lab_3cCount')) + 1))
                 window.Lab_3cCount.setText(str(config_ini.readvalue('init', 'Lab_3cCount')))  # 1流记数
 
                 config_ini.writeValue('init', 'Lab_talRoot',
                                       str(int(config_ini.readvalue('init', 'Lab_talRoot')) + 1))
                 window.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
+
+                MainWindow.slot_CutToSQL(self,
+                    FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
+                    FlowNum="3",  # 流号
+                    FixLength=str(window.Lab_3cSetLength.text()),  # 定尺长度
+                    Team=str(window.Btn_Class.text()),  # 班组
+                    SteelType=str(window.Lab_3cSteels.text()),  # 钢种
+                    RealWeight=str(window.Lab_3cWeight.text()),  # 真实重量
+                    Weighing="否",  # 是否称重
+                    SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
+                    IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
+                    adjustment=str(window.Lab_3cCompensate.text()),  # 补偿值
+                    density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),  # 读取数据库里的钢种密度
+                    theoryWeight=str(window.Lab_3bWeight.text())  # 理论重量
+                )
 
 
 
@@ -361,7 +403,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 frame_cut_angle=config_ini.readvalue('setcamre', 'frame_cut_f4_angle'),
                 setcutlimt=config_ini.readvalue('setcamre', 'setcutlimt_f4'),
                 threshold=int(config_ini.readvalue('setcamre', 'threshold_f4')),
-                Start_Cut_state=public['Start_Cut_state_F4']
+                Start_Cut_state=public['Start_Cut_state_F4'],
+                pullspeed=public['plc_4f_pullspeed'],
+                threshold_ratio=0.4
             )
 
             window.Lab_4cState.setText(frameCut_return_f4['Lab_fcState'])
@@ -370,15 +414,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # print(frameCut_return_f1)
             # 只有开始第一周期执行
             if frameCut_return_f4['Start_Cut_state_F'] == True:
+                print('4流切割')
                 # 增加流次计数量
                 config_ini.writeValue('init', 'Lab_4cCount',
                                       str(int(config_ini.readvalue('init', 'Lab_4cCount')) + 1))
-                window.Lab_4cCount.setText(str(config_ini.readvalue('init', 'Lab_4cCount')))  # 1流记数
+                window.Lab_4cCount.setText(str(config_ini.readvalue('init', 'Lab_4cCount')))  # 4流记数
 
                 config_ini.writeValue('init', 'Lab_talRoot',
                                       str(int(config_ini.readvalue('init', 'Lab_talRoot')) + 1))
                 window.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
 
+                MainWindow.slot_CutToSQL(self,
+                    FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
+                    FlowNum="4",  # 流号
+                    FixLength=str(window.Lab_4cSetLength.text()),  # 定尺长度
+                    Team=str(window.Btn_Class.text()),  # 班组
+                    SteelType=str(window.Lab_4cSteels.text()),  # 钢种
+                    RealWeight=str(window.Lab_4cWeight.text()),  # 真实重量
+                    Weighing="否",  # 是否称重
+                    SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
+                    IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
+                    adjustment=str(window.Lab_4cCompensate.text()),  # 补偿值
+                    density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),  # 读取数据库里的钢种密度
+                    theoryWeight=str(window.Lab_4bWeight.text())  # 理论重量
+                )
 
 
         except Exception as e:
@@ -390,10 +449,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     '''工业相机结束'''
 
     # 主页面刷新
+
     def autoShow(self):
         '''恢复上次关闭数据_初始化config.ini -> init'''
         self.Btn_Class.setText((config_ini.readvalue('init', 'Btn_Class')))  # 班次
-        self.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
+        # self.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
         self.Lab_talTon.setText((config_ini.readvalue('init', 'Lab_talTon')))  # 总重量
         self.Btn_FurNo.setText("炉号:  " + str((config_fur.readvalue('FurListData1','lne_setfurno'))))  # 炉号
         self.Lab_1cSteels.setText((config_ini.readvalue('init', 'Lab_1cSteels')))  # 1流钢种
@@ -646,9 +706,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             window.Lab_1aWeight.setStyleSheet("background-color:black;\n"
                            "color:yellow;")
 
-
-
-
+        window.Lab_1cSpeed.setText(str(round(float(public['plc_1f_pullspeed']),2)))
+        window.Lab_2cSpeed.setText(str(round(float(public['plc_2f_pullspeed']),2)))
+        window.Lab_3cSpeed.setText(str(round(float(public['plc_3f_pullspeed']),2)))
+        window.Lab_4cSpeed.setText(str(round(float(public['plc_4f_pullspeed']),2)))
 
         # if public['plc_cut_IsSuccess'] == True :
         #     self.Lab_PLCTon.setText("PLC连接成功")
@@ -711,7 +772,7 @@ class FurNoPage(QDialog, UI_SetFurNo.Ui_Dialog):  # 炉号
                     config_fur.writeValue(Furstr, 'lne_setfurnum', self.Lne_SetFurNum.text())
                     config_fur.writeValue(Furstr, 'show', '1')
                     self.LW_SetFurNo.addItem('炉号' + str(self.Lne_SetFurNo.text()) + '根数' + str(self.Lne_SetFurNum.text()))
-                    window.autoShow()
+                    # window.autoShow()
                     break
         else:
             QtWidgets.QMessageBox.question(self, "提示", "请全部输入！",
@@ -1672,7 +1733,6 @@ class SetCalibratePage(QDialog, UI_SetCalibrate.Ui_Dialog):
         self.Lne_Frame_cut_F3_angle.setValidator(QDoubleValidator())  # 设置输入浮点数字范围
         self.Lne_Frame_cut_F4_angle.setValidator(QDoubleValidator())  # 设置输入浮点数字范围
 
-
         self.Lab_Camre_X.setText(config_ini.readvalue('setcamre', 'camre_x'))
         self.Lab_Camre_Y.setText(config_ini.readvalue('setcamre', 'camre_y'))
         self.Btn_SaveCutData.clicked.connect(self.slot_savesetcamrecutdata)
@@ -1844,7 +1904,6 @@ def thread_PLC_CUT_stat(name):
             public['plc_weighting_F2'] = S7_300.printReadResult(plc_cut.ReadBool("M21.3"))
             public['plc_weighting_F3'] = S7_300.printReadResult(plc_cut.ReadBool("M31.3"))
             public['plc_weighting_F4'] = S7_300.printReadResult(plc_cut.ReadBool("M41.3"))
-            print('1流的称重信号状态', public['plc_weighting_F1'])
 
         else:
             public['plc_cut_IsSuccess'] = False
@@ -1867,6 +1926,9 @@ def thread_PLC_1f_stat(name):
     while PLC_stat_flag:
         if plc_1f.ConnectServer().IsSuccess == True:
             public['plc_1f_IsSuccess'] = True
+            # print('1',S7_300.printReadResult(plc_1f.ReadFloat("DB1.26.0")))
+            public['plc_1f_pullspeed'] = S7_300.printReadResult(plc_1f.ReadFloat("M224"))
+            # print(S7_300.printReadResult(plc_1f.ReadFloat("M224")))
 
         else:
             public['plc_1f_IsSuccess'] = False
@@ -1878,6 +1940,9 @@ def thread_PLC_2f_stat(name):
     while PLC_stat_flag:
         if plc_2f.ConnectServer().IsSuccess == True:
             public['plc_2f_IsSuccess'] = True
+            # print('2',S7_300.printReadResult(plc_2f.ReadFloat("DB1.26.0")))
+            public['plc_2f_pullspeed'] = S7_300.printReadResult(plc_2f.ReadFloat("M224"))
+            # print(S7_300.printReadResult(plc_2f.ReadFloat("M224")))
 
         else:
             public['plc_2f_IsSuccess'] = False
@@ -1889,6 +1954,8 @@ def thread_PLC_3f_stat(name):
     while PLC_stat_flag:
         if plc_3f.ConnectServer().IsSuccess == True:
             public['plc_3f_IsSuccess'] = True
+            # print('3',S7_300.printReadResult(plc_3f.ReadFloat("DB1.26.0")))
+            public['plc_3f_pullspeed'] = S7_300.printReadResult(plc_3f.ReadFloat("M224"))
 
         else:
             public['plc_3f_IsSuccess'] = False
@@ -1900,6 +1967,8 @@ def thread_PLC_4f_stat(name):
     while PLC_stat_flag:
         if plc_4f.ConnectServer().IsSuccess == True:
             public['plc_4f_IsSuccess'] = True
+            # print('4',S7_300.printReadResult(plc_4f.ReadFloat("DB1.26.0")))
+            public['plc_4f_pullspeed'] = S7_300.printReadResult(plc_4f.ReadFloat("M224"))
 
         else:
             public['plc_4f_IsSuccess'] = False
