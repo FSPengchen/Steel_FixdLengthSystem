@@ -7,7 +7,7 @@ class Config():
         self.pathconfig = pathconfig
 
     def readTest(self):
-        os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
+        os.chdir("..\FixedLengthSystem")
         cf = configparser.ConfigParser()
         # read(filename) 读文件内容
         filename = cf.read(self.pathconfig, encoding="utf-8")
@@ -45,7 +45,7 @@ class Config():
     '''
 
     def readAllSection(self):
-        os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
+        os.chdir("..\FixedLengthSystem")
         cf = configparser.ConfigParser()
         cf.read("config.ini", encoding="utf-8")
         reslut = cf.sections()
@@ -64,7 +64,7 @@ class Config():
 
     def writeTest(self):   #新建配置文件，写入文件
 
-        os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
+        os.chdir("..\FixedLengthSystem")
         cf = configparser.ConfigParser()
 
         # 往配置文件写入内容
@@ -95,7 +95,7 @@ class Config():
 
 
     def add_section(self,section):  # add section 添加section项
-        os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
+        os.chdir("..\FixedLengthSystem")
         cf = configparser.ConfigParser()
         cf.add_section(section)
         with open(self.pathconfig, "w+") as f:
@@ -111,7 +111,7 @@ class Config():
 
     def writeChangeTest(self):
         try:
-            os.chdir(r"E:\PycharmProjects\FixedLengthSystem")
+            os.chdir("..\FixedLengthSystem")
         except FileNotFoundError:
             print("未找到该文件")
         else:

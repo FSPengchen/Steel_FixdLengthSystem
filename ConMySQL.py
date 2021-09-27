@@ -3,7 +3,7 @@ import pymysql
 from dbutils.pooled_db import PooledDB
 import datetime
 
-from clickhouse_driver import Client
+# from clickhouse_driver import Client
 import Log
 
 from tkinter import messagebox
@@ -14,12 +14,12 @@ from tkinter import messagebox
 
 '''
 
-clickhouse_user = 'guest1'
-clickhouse_pwd = '0ecadf'
-clickhouse_host_sq = '10.6.80.18'
-clickhouse_database = 'sensor'
-client = Client(host=clickhouse_host_sq, user=clickhouse_user,
-                database=clickhouse_database, password=clickhouse_pwd)
+# clickhouse_user = 'guest1'
+# clickhouse_pwd = '0ecadf'
+# clickhouse_host_sq = '10.6.80.18'
+# clickhouse_database = 'sensor'
+# client = Client(host=clickhouse_host_sq, user=clickhouse_user,
+#                 database=clickhouse_database, password=clickhouse_pwd)
 #
 # pool = PooledDB(pymysql, 1, host='127.0.0.1', user='root', passwd='123', db='convert', port=3306)
 # conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
@@ -90,6 +90,6 @@ def CutToSQL(sqlfield, sqlvalue):
         cursor.execute(sql)
         conn.commit()
     except Exception as e:
-        log.logger.warning(e)
+        print(e)
     else:
         return

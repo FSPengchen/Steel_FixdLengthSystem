@@ -30,6 +30,8 @@ class Ui_Dialog(object):
         self.Btn_No = QtWidgets.QPushButton(Dialog)
         self.Btn_No.setGeometry(QtCore.QRect(240, 170, 93, 28))
         self.Btn_No.setObjectName("Btn_No")
+        self.Lab_showSteelType.setBuddy(self.Lne_steelName)
+        self.Lab_showSteelType_2.setBuddy(self.Lne_steelDensity)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)

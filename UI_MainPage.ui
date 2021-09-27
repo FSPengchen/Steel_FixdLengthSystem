@@ -338,7 +338,7 @@ color:yellow;</string>
     <property name="geometry">
      <rect>
       <x>1000</x>
-      <y>840</y>
+      <y>830</y>
       <width>241</width>
       <height>41</height>
      </rect>
@@ -421,15 +421,15 @@ background-color:red;</string>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>1220</x>
+      <x>1190</x>
       <y>580</y>
-      <width>51</width>
+      <width>81</width>
       <height>241</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLabel" name="Labtxt_bState">
+      <widget class="QLabel" name="Labtxt_bTemperature">
        <property name="font">
         <font>
          <family>微软雅黑</family>
@@ -449,7 +449,7 @@ color:red
 </string>
        </property>
        <property name="text">
-        <string>状态</string>
+        <string>温度</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -457,11 +457,11 @@ color:red
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="Lab_1bState">
+      <widget class="QLabel" name="Lab_1bTemperature">
        <property name="font">
         <font>
          <family>微软雅黑</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <weight>9</weight>
          <italic>false</italic>
          <bold>false</bold>
@@ -472,12 +472,12 @@ color:red
        </property>
        <property name="styleSheet">
         <string notr="true">background-color:cornflowerblue;
-font: 75 12pt &quot;微软雅黑&quot;;
+font: 75 10pt &quot;微软雅黑&quot;;
 color:yellow
 </string>
        </property>
        <property name="text">
-        <string>闭环</string>
+        <string>0</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -485,11 +485,11 @@ color:yellow
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="Lab_2bState">
+      <widget class="QLabel" name="Lab_2bTemperature">
        <property name="font">
         <font>
          <family>微软雅黑</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <weight>9</weight>
          <italic>false</italic>
          <bold>false</bold>
@@ -500,12 +500,12 @@ color:yellow
        </property>
        <property name="styleSheet">
         <string notr="true">background-color:cornflowerblue;
-font: 75 12pt &quot;微软雅黑&quot;;
+font: 75 10pt &quot;微软雅黑&quot;;
 color:yellow
 </string>
        </property>
        <property name="text">
-        <string>闭环</string>
+        <string>0</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -513,11 +513,11 @@ color:yellow
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="Lab_3bState">
+      <widget class="QLabel" name="Lab_3bTemperature">
        <property name="font">
         <font>
          <family>微软雅黑</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <weight>9</weight>
          <italic>false</italic>
          <bold>false</bold>
@@ -528,12 +528,12 @@ color:yellow
        </property>
        <property name="styleSheet">
         <string notr="true">background-color:cornflowerblue;
-font: 75 12pt &quot;微软雅黑&quot;;
+font: 75 10pt &quot;微软雅黑&quot;;
 color:yellow
 </string>
        </property>
        <property name="text">
-        <string>闭环</string>
+        <string>0</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -541,11 +541,11 @@ color:yellow
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="Lab_4bState">
+      <widget class="QLabel" name="Lab_4bTemperature">
        <property name="font">
         <font>
          <family>微软雅黑</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <weight>9</weight>
          <italic>false</italic>
          <bold>false</bold>
@@ -556,12 +556,12 @@ color:yellow
        </property>
        <property name="styleSheet">
         <string notr="true">background-color:cornflowerblue;
-font: 75 12pt &quot;微软雅黑&quot;;
+font: 75 10pt &quot;微软雅黑&quot;;
 color:yellow
 </string>
        </property>
        <property name="text">
-        <string>闭环</string>
+        <string>0</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -573,7 +573,7 @@ color:yellow
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>1130</x>
+      <x>1100</x>
       <y>580</y>
       <width>81</width>
       <height>241</height>
@@ -613,7 +613,7 @@ color:red
        <property name="font">
         <font>
          <family>微软雅黑</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <weight>9</weight>
          <italic>false</italic>
          <bold>false</bold>
@@ -624,7 +624,7 @@ color:red
        </property>
        <property name="styleSheet">
         <string notr="true">background-color:cornflowerblue;
-font: 75 12pt &quot;微软雅黑&quot;;
+font: 75 10pt &quot;微软雅黑&quot;;
 color:yellow
 </string>
        </property>
@@ -641,7 +641,7 @@ color:yellow
        <property name="font">
         <font>
          <family>微软雅黑</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <weight>9</weight>
          <italic>false</italic>
          <bold>false</bold>
@@ -652,7 +652,7 @@ color:yellow
        </property>
        <property name="styleSheet">
         <string notr="true">background-color:cornflowerblue;
-font: 75 12pt &quot;微软雅黑&quot;;
+font: 75 10pt &quot;微软雅黑&quot;;
 color:yellow
 </string>
        </property>
@@ -669,7 +669,7 @@ color:yellow
        <property name="font">
         <font>
          <family>微软雅黑</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <weight>9</weight>
          <italic>false</italic>
          <bold>false</bold>
@@ -680,7 +680,7 @@ color:yellow
        </property>
        <property name="styleSheet">
         <string notr="true">background-color:cornflowerblue;
-font: 75 12pt &quot;微软雅黑&quot;;
+font: 75 10pt &quot;微软雅黑&quot;;
 color:yellow
 </string>
        </property>
@@ -697,7 +697,7 @@ color:yellow
        <property name="font">
         <font>
          <family>微软雅黑</family>
-         <pointsize>12</pointsize>
+         <pointsize>10</pointsize>
          <weight>9</weight>
          <italic>false</italic>
          <bold>false</bold>
@@ -708,7 +708,7 @@ color:yellow
        </property>
        <property name="styleSheet">
         <string notr="true">background-color:cornflowerblue;
-font: 75 12pt &quot;微软雅黑&quot;;
+font: 75 10pt &quot;微软雅黑&quot;;
 color:yellow
 </string>
        </property>
@@ -727,7 +727,7 @@ color:yellow
      <rect>
       <x>1000</x>
       <y>580</y>
-      <width>121</width>
+      <width>91</width>
       <height>241</height>
      </rect>
     </property>
@@ -1806,7 +1806,7 @@ color:yellow
 </string>
         </property>
         <property name="text">
-         <string>自动</string>
+         <string>模式异常</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -1974,7 +1974,7 @@ color:yellow
 </string>
         </property>
         <property name="text">
-         <string>自动</string>
+         <string>模式异常</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -2618,7 +2618,7 @@ color:yellow
 </string>
         </property>
         <property name="text">
-         <string>自动</string>
+         <string>模式异常</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -2814,7 +2814,7 @@ color:yellow
 </string>
         </property>
         <property name="text">
-         <string>自动</string>
+         <string>模式异常</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -3122,7 +3122,7 @@ color:red
 </string>
         </property>
         <property name="text">
-         <string>速度</string>
+         <string>拉速</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

@@ -7,6 +7,7 @@ import datetime
 本地数据库与82服务器数据库同步
 '''
 
+
 class SQL_Synchronizer():
     def __init__(self):
         # 连接82服务器数据库

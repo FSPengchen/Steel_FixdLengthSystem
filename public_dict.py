@@ -15,6 +15,43 @@ public_dict = {
     'temp_Lne_Frame_cut_Y1_F2': 0,  # 2流切割Y轴位置点
     'temp_Lne_Frame_cut_Y1_F3': 0,  # 3流切割Y轴位置点
     'temp_Lne_Frame_cut_Y1_F4': 0,  # 4流切割Y轴位置点
+    'temp_Lab_1bWeight': 0,  # 1流称重重量
+    'temp_Lab_2bWeight': 0,  # 2流称重重量
+    'temp_Lab_3bWeight': 0,  # 3流称重重量
+    'temp_Lab_4bWeight': 0,  # 4流称重重量
+    'temp_Lab_1bTemperature': 0,  # 1流温度
+    'temp_Lab_2bTemperature': 0,  # 2流温度
+    'temp_Lab_3bTemperature': 0,  # 3流温度
+    'temp_Lab_4bTemperature': 0,  # 4流温度
+    # 切割PLC变量
+    'plc_cut_IsSuccess': False,  # 切割PLC通讯状态
+    'plc_weight_manual_F1': False,  # 1流称重模式
+    'plc_weight_manual_F2': False,  # 2流称重模式
+    'plc_weight_manual_F3': False,  # 3流称重模式
+    'plc_weight_manual_F4': False,  # 4流称重模式
+    'plc_weight_auto_F1': False,  # 1流称重模式
+    'plc_weight_auto_F2': False,  # 2流称重模式
+    'plc_weight_auto_F3': False,  # 3流称重模式
+    'plc_weight_auto_F4': False,  # 4流称重模式
+    'weiht_flag': True,  # 称重通断启用信号
+    # 连铸PLC通讯变量
+    'Start_Cut_state_F1': False,  # 1流切割状态标识
+    'Start_Cut_state_F2': False,  # 2流切割状态标识
+    'Start_Cut_state_F3': False,  # 3流切割状态标识
+    'Start_Cut_state_F4': False,  # 4流切割状态标识
+    'plc_weighting_F1': False,  # 1流在称重
+    'plc_weighting_F2': False,  # 2流在称重
+    'plc_weighting_F3': False,  # 3流在称重
+    'plc_weighting_F4': False,  # 4流在称重
+    'plc_public_IsSuccess': False,  # 连铸公共流PLC通讯状态
+    'plc_1f_IsSuccess': False,  # 连铸1流PLC通讯状态
+    'plc_2f_IsSuccess': False,  # 连铸2流PLC通讯状态
+    'plc_3f_IsSuccess': False,  # 连铸3流PLC通讯状态
+    'plc_4f_IsSuccess': False,  # 连铸4流PLC通讯状态
+    'plc_1f_pullspeed': 0,  # 连铸1流PLC拉速
+    'plc_2f_pullspeed': 0,  # 连铸2流PLC拉速
+    'plc_3f_pullspeed': 0,  # 连铸3流PLC拉速
+    'plc_4f_pullspeed': 0,  # 连铸4流PLC拉速
 }
 
 list_SteelData = []

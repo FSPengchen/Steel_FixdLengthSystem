@@ -62,3 +62,32 @@ def SQL_updataSteeltype(steeltypename, steeltypedensity):
     sql = "UPDATE `steeltype` set `钢种密度` ='" + str(steeltypedensity) + "' where `钢种名称` = '" + str(steeltypename) + "'"
     cursor.execute(sql)
     conn.commit()
+
+
+def SQL_readSteeldensity(steeltypename):
+    sql = "SELECT `钢种密度` FROM `steeltype` WHERE  `钢种名称` = '" + str(steeltypename) + "'"
+    cursor.execute(sql)
+    conn.commit()
+    return_list = cursor.fetchall()
+    if len(return_list) != 0:
+        return_str = return_list[0][0]
+    else:
+        return_str = 7.8
+    return return_str
+
+
+def CutToSQL(sqlfield, sqlvalue):
+    '''
+    :param sqlfield: "inDate,heatNo,wateScrap_begin"
+    :param sqlvalue: str("'" + smeltv1['inDate'] +"','"+ str(smeltv1['heatNo']) +"','"+ smeltv1['wateScrap_begin'] + "'")
+    :return: 写入数据库
+    '''
+    try:
+        sql = "replace into productiondata (" + str(sqlfield) + ")value(" + str(sqlvalue) + ")"
+        # print(sql)
+        cursor.execute(sql)
+        conn.commit()
+    except Exception as e:
+        print('CutToSQL', e)
+    else:
+        return

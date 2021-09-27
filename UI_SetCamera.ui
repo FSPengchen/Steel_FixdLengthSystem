@@ -7,25 +7,12 @@
     <x>0</x>
     <y>0</y>
     <width>873</width>
-    <height>353</height>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>视频参数调整</string>
   </property>
-  <widget class="QSlider" name="horizontalSlider_Contrast">
-   <property name="geometry">
-    <rect>
-     <x>70</x>
-     <y>120</y>
-     <width>511</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-  </widget>
   <widget class="QSlider" name="horizontalSlider_Light">
    <property name="geometry">
     <rect>
@@ -53,22 +40,6 @@
    </property>
    <property name="text">
     <string>亮度：</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>620</x>
-     <y>130</y>
-     <width>91</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color :red</string>
-   </property>
-   <property name="text">
-    <string>对比度：0</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_2">
@@ -129,8 +100,8 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>260</y>
+     <x>70</x>
+     <y>430</y>
      <width>619</width>
      <height>35</height>
     </rect>
@@ -186,7 +157,7 @@ font: 75 12pt &quot;微软雅黑&quot;;
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>170</y>
+     <y>90</y>
      <width>505</width>
      <height>71</height>
     </rect>
@@ -411,6 +382,281 @@ font: 75 12pt &quot;微软雅黑&quot;;
    </property>
    <property name="text">
     <string>调整模式</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="rBn_Threshold_auto_f1">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>210</y>
+     <width>115</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动调整</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="rBn_Threshold_auto_f2">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>210</y>
+     <width>115</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动调整</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="rBn_Threshold_auto_f3">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>210</y>
+     <width>115</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动调整</string>
+   </property>
+  </widget>
+  <widget class="QRadioButton" name="rBn_Threshold_auto_f4">
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>210</y>
+     <width>115</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动调整</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>240</y>
+     <width>505</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0" rowspan="2">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_42">
+        <property name="styleSheet">
+         <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+        </property>
+        <property name="text">
+         <string>1流阈值比:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="Lne_Threshold_ratio_f1">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+        </property>
+        <property name="text">
+         <string>0.4</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="label_43">
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>2流阈值比:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_44">
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>3流阈值比:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QLabel" name="label_45">
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>4流阈值比:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="Lne_Threshold_ratio_f2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>0.4</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QLineEdit" name="Lne_Threshold_ratio_f3">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>0.4</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3">
+     <widget class="QLineEdit" name="Lne_Threshold_ratio_f4">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>120</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+      </property>
+      <property name="text">
+       <string>0.4</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="label_46">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>380</y>
+     <width>490</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>8</pointsize>
+     <weight>9</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+font: 75 8pt &quot;微软雅黑&quot;;
+
+</string>
+   </property>
+   <property name="text">
+    <string>公式:判断阈值 = 设定阈值 * 拉速 * 阈值比(默认0.4)</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
  </widget>
