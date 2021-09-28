@@ -14,7 +14,7 @@ def quantile_exc(data, n):  # 四分位数，其中data为数据组，n为第几
     return quartile
 
 def frameCut(frame_cut, cut_x0, cut_x1, cut_y0, cut_y1, temp_Lne_Frame_cut_Y1, temp_Lne_Frame_cut_Y0,
-             frame_cut_angle, setcutlimt, threshold, Start_Cut_state, threshold_ratio=0.4, pullspeed=2.5):
+             frame_cut_angle, setcutlimt, threshold, Start_Cut_state, threshold_ratio_switch, threshold_ratio=0.4, pullspeed=2.5):
     thickness = 2
     lineType = 4
     colors_Line = (255, 0, 0)
@@ -58,7 +58,7 @@ def frameCut(frame_cut, cut_x0, cut_x1, cut_y0, cut_y1, temp_Lne_Frame_cut_Y1, t
         gray = cv2.cvtColor(frame_cut_f_temp, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (9, 9), 0)  # 高斯
         # 判断阈值 = 设定阈值 * 拉速 * 阈值比例
-        if float(pullspeed) >= 1.6 or float(threshold_ratio) <= 0.8 or float(threshold_ratio) >= 0.2 :
+        if float(pullspeed) >= 1.6 and float(threshold_ratio) <= 0.8 and float(threshold_ratio) >= 0.2 and threshold_ratio_switch == True:
             ret, thresh = cv2.threshold(blurred, int(threshold) * float(pullspeed) * float(threshold_ratio), 255,
                                         cv2.THRESH_BINARY)  # 二值阀图像，更好的边缘检测
         else:
@@ -130,9 +130,13 @@ def frameCut(frame_cut, cut_x0, cut_x1, cut_y0, cut_y1, temp_Lne_Frame_cut_Y1, t
                     minX_list.append(np.min(contoursX_list))
                     contoursX_list.remove(np.min(contoursX_list))
 
-            # 第2四分位数
-            quantile_minX_list2 = quantile_exc(minX_list, 2)
-            print("第2四分位数", quantile_minX_list2)
+            # 四分位数
+            if len(minX_list) >= 7:
+                # print('minX_list', minX_list)
+                quantile_minX_list2 = quantile_exc(minX_list, 2)
+            # print("第1四分位数", quantile_minX_list2)
+            else:
+                quantile_minX_list2 = np.min(contoursX_list)
 
             # 钢坯头部位置提示线
             ptStart_angle_X = int(
@@ -146,8 +150,8 @@ def frameCut(frame_cut, cut_x0, cut_x1, cut_y0, cut_y1, temp_Lne_Frame_cut_Y1, t
                 int(quantile_minX_list2) + int(ptStart_angle_X), temp_Lne_Frame_cut_Y0)  # 画线直线起点
             Line_End = (
                 int(quantile_minX_list2) - int(ptStart_angle_X), temp_Lne_Frame_cut_Y1)  # 画线直线终点
-            print('quantile_minX_list2',quantile_minX_list2)
-            print('min(contoursX_list)',min(contoursX_list))
+            # print('quantile_minX_list2',quantile_minX_list2)
+            # print('min(contoursX_list)',min(contoursX_list))
 
             # int((int(temp_Lne_Frame_cut_Y0) + int(temp_Lne_Frame_cut_Y1)) / 2) #中间值
             # 跟踪钢坯头部线

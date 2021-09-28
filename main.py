@@ -1,9 +1,10 @@
 # coding=utf-8
-#标准类
+# 标准类
 import binascii
 import datetime
 import sys
 import time
+import traceback
 from tkinter import messagebox
 
 import numpy as np
@@ -57,6 +58,7 @@ import Frame_Cut_Temp
 from UI_MainPage import *
 from UI_SetTeam import *
 import public_dict  # 引用公用数据类
+
 # 画面类
 
 
@@ -84,23 +86,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.setWindowFlag(QtCore.Qt.FramelessWindowHint)  # 隐藏窗口
         self.setFixedSize(1280, 960)
 
-        self.Btn_Class.clicked.connect(self.slot_SetTeam)       # 按钮-设置班组
-        self.Btn_dataManagement.clicked.connect(self.slot_ProductionData)   # 按钮-数据管理
-        self.Btn_videoParameter.clicked.connect(self.slot_Camera)       # 按钮-视频参数调整
-        self.Act_Exit.setShortcut(self.close())     # 菜单栏
+        self.Btn_Class.clicked.connect(self.slot_SetTeam)  # 按钮-设置班组
+        self.Btn_dataManagement.clicked.connect(self.slot_ProductionData)  # 按钮-数据管理
+        self.Btn_videoParameter.clicked.connect(self.slot_Camera)  # 按钮-视频参数调整
+        self.Act_Exit.setShortcut(self.close())  # 菜单栏
         self.Act_FurNo.triggered.connect(self.slot_SetFurNo)
         self.Act_Exit.triggered.connect(self.close)  # 菜单栏
-        self.Act_SetAlgorithm.triggered.connect(self.slot_SetAlgorithm_triggered)   # 菜单栏
-        self.Act_SetSteelData.triggered.connect(self.slot_SetSteelData)   # 菜单栏 定尺管理
-        self.Act_SetTeam.triggered.connect(self.slot_SetTeam)   # 设备班组
-        self.Act_Calibrate.triggered.connect(self.slot_SetCalibrate)   # 设备班组
+        self.Act_SetAlgorithm.triggered.connect(self.slot_SetAlgorithm_triggered)  # 菜单栏
+        self.Act_SetSteelData.triggered.connect(self.slot_SetSteelData)  # 菜单栏 定尺管理
+        self.Act_SetTeam.triggered.connect(self.slot_SetTeam)  # 设备班组
+        self.Act_Calibrate.triggered.connect(self.slot_SetCalibrate)  # 设备班组
         self.Act_Help.triggered.connect(self.slot_Help)  # 帮助
         self.Act_SetSteelType.triggered.connect(self.slot_SetSteelType)  # 钢种管理
         self.Btn_Exit.clicked.connect(self.slot_close)  # 退出
 
-        self.autoShow()     # 主页面刷新
-        self.center()   # 窗口居中
-
+        self.autoShow()  # 主页面刷新
+        self.center()  # 窗口居中
 
         try:
             self.main_CameraInit()  # 启动工业摄像头
@@ -112,27 +113,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         config_ini.writeValue('init', 'smtp_vserver', 'sss')  # 测试  11810*160*160 预夹=500 定重目标=2333.0
 
         '''时间刷新'''
-        self.timer = QTimer()    # 设定时间周期线程
+        self.timer = QTimer()  # 设定时间周期线程
         self.timer.timeout.connect(self.slot_timeOut)
-        self.timer.setInterval(500)     # 设置定时周期，超出周期启动timeout函数
+        self.timer.setInterval(500)  # 设置定时周期，超出周期启动timeout函数
         self.timer.start()  # 启动
 
-        self.Synchronizer_timer = QTimer()    # 设定时间周期线程
-        self.Synchronizer_timer.timeout.connect(self.slot_Synchronizer_timer)
-        self.Synchronizer_timer.setInterval(500000)    # 设置定时周期，超出周期启动timeout函数
+        self.Synchronizer_timer = QTimer()  # 设定时间周期线程
+        # self.Synchronizer_timer.timeout.connect(self.slot_Synchronizer_timer)
+        self.Synchronizer_timer.setInterval(500000)  # 设置定时周期，超出周期启动timeout函数
         self.Synchronizer_timer.start()  # 启动
-
 
     # 鼠标位置坐标显示
     def mouseMoveEvent(self, event):
         self.Labtxt_coordinate_X.setText("X:" + str(int(event.x()) - 30))
         self.Labtxt_coordinate_Y.setText("Y:" + str(int(event.y()) - 157))
 
-
     '''工业相机开始'''
 
     def main_CameraInit(self):
-        global hCamera,pFrameBuffer
+        global hCamera, pFrameBuffer
         DevList = mvsdk.CameraEnumerateDevice()
         nDev = len(DevList)
         if nDev < 1:
@@ -193,15 +192,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     frame_data = (mvsdk.c_ubyte * FrameHead.uBytes).from_address(pFrameBuffer)
                     frame = np.frombuffer(frame_data, dtype=np.uint8)
                     self.frame = frame.reshape((FrameHead.iHeight, FrameHead.iWidth,
-                                           1 if FrameHead.uiMediaType == mvsdk.CAMERA_MEDIA_TYPE_MONO8 else 3))
+                                                1 if FrameHead.uiMediaType == mvsdk.CAMERA_MEDIA_TYPE_MONO8 else 3))
                 except Exception as e:
                     print("相机错误代码：", e)
             else:
                 # 照片查看
-                self.labelCamera.resize(900, 480)    # 存放图片位置
+                self.labelCamera.resize(900, 480)  # 存放图片位置
                 self.frame = cv2.imread(
-                "pictrue\\FT-G2F202-9.bmp"
-                )
+                    "pictrue\\FT-G2F202-Snapshot-20210928072740-3204056805986.bmp")
 
             if int(config_ini.readvalue('setcamre', 'flip')) < 2:  # 判断标识是否翻转
                 self.frame = cv2.flip(self.frame,
@@ -222,10 +220,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def frameCut(self):
         try:
             # 相机拍摄图像分割
-            config_ini.writeValue('setcamre', 'camre_x', str(self.frame.shape[1]))   # 将相机分辨率存入
-            config_ini.writeValue('setcamre', 'camre_y', str(self.frame.shape[0]))   # 将相机分辨率存入
-            frame_cut_x0 = config_ini.readvalue('setcamre', 'frame_cut_x0')     # 读取存入设定的裁剪坐标
-            frame_cut_x1 = config_ini.readvalue('setcamre', 'frame_cut_x1')     # 读取存入设定的裁剪坐标
+            config_ini.writeValue('setcamre', 'camre_x', str(self.frame.shape[1]))  # 将相机分辨率存入
+            config_ini.writeValue('setcamre', 'camre_y', str(self.frame.shape[0]))  # 将相机分辨率存入
+            frame_cut_x0 = config_ini.readvalue('setcamre', 'frame_cut_x0')  # 读取存入设定的裁剪坐标
+            frame_cut_x1 = config_ini.readvalue('setcamre', 'frame_cut_x1')  # 读取存入设定的裁剪坐标
             frame_cut_y0 = config_ini.readvalue('setcamre', 'frame_cut_y0')
             frame_cut_y1 = config_ini.readvalue('setcamre', 'frame_cut_y1')
 
@@ -234,13 +232,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # cv2.imshow("Original picture", self.frame)  # 展示原图
             # 分割后图像
-            frame_cut = self.frame[int(frame_cut_y0):int(frame_cut_y1), int(frame_cut_x0):int(frame_cut_x1)]  # 裁剪坐标为[y0:y1, x0:x1]
-            frame_cut = cv2.resize(frame_cut, (int((config_ini.readvalue('setcamre', 'reframe_x'))), int((config_ini.readvalue('setcamre', 'reframe_y')))), interpolation=cv2.INTER_AREA)  #重新定义显示尺寸
+            frame_cut = self.frame[int(frame_cut_y0):int(frame_cut_y1),
+                        int(frame_cut_x0):int(frame_cut_x1)]  # 裁剪坐标为[y0:y1, x0:x1]
+            frame_cut = cv2.resize(frame_cut, (
+            int((config_ini.readvalue('setcamre', 'reframe_x'))), int((config_ini.readvalue('setcamre', 'reframe_y')))),
+                                   interpolation=cv2.INTER_AREA)  # 重新定义显示尺寸
             frame_cut = cv2.cvtColor(frame_cut, cv2.COLOR_BGR2RGB)  # 重新定义显示通道
 
-
-
             # 1流实例化图像处理
+
+            if str(config_ini.readvalue('setcamre', 'ceb_threshold_auto_1f')) == 'True':
+                threshold_ratio_switch_F1 = 1
+            elif str(config_ini.readvalue('setcamre', 'ceb_threshold_auto_1f')) == 'False':
+                threshold_ratio_switch_F1 = 0
 
             frameCut_return_f1 = Frame_Cut_Temp.frameCut(
                 frame_cut=frame_cut,
@@ -254,8 +258,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 setcutlimt=config_ini.readvalue('setcamre', 'setcutlimt_f1'),
                 threshold=int(config_ini.readvalue('setcamre', 'threshold_f1')),
                 Start_Cut_state=public['Start_Cut_state_F1'],
-                pullspeed= public['plc_1f_pullspeed'],
-                threshold_ratio=0.4
+                pullspeed=public['plc_1f_pullspeed'],
+                threshold_ratio=0.4,
+                threshold_ratio_switch=threshold_ratio_switch_F1
+
             )
 
             window.Lab_1cState.setText(frameCut_return_f1['Lab_fcState'])
@@ -275,24 +281,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 window.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
 
                 MainWindow.slot_CutToSQL(self,
-                    FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
-                    FlowNum="1",  # 流号
-                    FixLength=str(window.Lab_1cSetLength.text()),  # 定尺长度
-                    Team=str(window.Btn_Class.text()),  # 班组
-                    SteelType=str(window.Lab_1cSteels.text()),  # 钢种
-                    RealWeight=str(window.Lab_1cWeight.text()),  # 真实重量
-                    Weighing="否",  # 是否称重
-                    SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
-                    IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
-                    adjustment=str(window.Lab_1cCompensate.text()),  # 补偿值
-                    density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),  # 读取数据库里的钢种密度
-                    theoryWeight=str(window.Lab_1bWeight.text())  # 理论重量
-                )
+                                         FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
+                                         FlowNum="1",  # 流号
+                                         FixLength=str(window.Lab_1cSetLength.text()),  # 定尺长度
+                                         Team=str(window.Btn_Class.text()),  # 班组
+                                         SteelType=str(window.Lab_1cSteels.text()),  # 钢种
+                                         RealWeight=str(window.Lab_1cWeight.text()),  # 真实重量
+                                         Weighing="否",  # 是否称重
+                                         SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
+                                         IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
+                                         adjustment=str(window.Lab_1cCompensate.text()),  # 补偿值
+                                         density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),
+                                         # 读取数据库里的钢种密度
+                                         theoryWeight=str(window.Lab_1bWeight.text())  # 理论重量
+                                         )
                 # 传给PLC  给M区变量1个值来判断切割
 
             # print('周期查看',frameCut_return_f1)
 
             # 2流实例化图像处理
+
+            if str(config_ini.readvalue('setcamre', 'ceb_threshold_auto_2f')) == 'True':
+                threshold_ratio_switch_F2 = 1
+            elif str(config_ini.readvalue('setcamre', 'ceb_threshold_auto_2f')) == 'False':
+                threshold_ratio_switch_F2 = 0
+
             frameCut_return_f2 = Frame_Cut_Temp.frameCut(
                 frame_cut=frame_cut,
                 cut_y0=float(config_ini.readvalue('setcamre', 'frame_cut_y0_f2')),
@@ -305,8 +318,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 setcutlimt=config_ini.readvalue('setcamre', 'setcutlimt_f2'),
                 threshold=int(config_ini.readvalue('setcamre', 'threshold_f2')),
                 Start_Cut_state=public['Start_Cut_state_F2'],
-                pullspeed = public['plc_2f_pullspeed'],
-                threshold_ratio=0.4
+                pullspeed=public['plc_2f_pullspeed'],
+                threshold_ratio=0.4,
+                threshold_ratio_switch = threshold_ratio_switch_F2
             )
 
             window.Lab_2cState.setText(frameCut_return_f2['Lab_fcState'])
@@ -326,22 +340,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 window.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
 
                 MainWindow.slot_CutToSQL(self,
-                    FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
-                    FlowNum="2",  # 流号
-                    FixLength=str(window.Lab_2cSetLength.text()),  # 定尺长度
-                    Team=str(window.Btn_Class.text()),  # 班组
-                    SteelType=str(window.Lab_2cSteels.text()),  # 钢种
-                    RealWeight=str(window.Lab_2cWeight.text()),  # 真实重量
-                    Weighing="否",  # 是否称重
-                    SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
-                    IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
-                    adjustment=str(window.Lab_2cCompensate.text()),  # 补偿值
-                    density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),  # 读取数据库里的钢种密度
-                    theoryWeight=str(window.Lab_2bWeight.text())  # 理论重量
-                )
+                                         FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
+                                         FlowNum="2",  # 流号
+                                         FixLength=str(window.Lab_2cSetLength.text()),  # 定尺长度
+                                         Team=str(window.Btn_Class.text()),  # 班组
+                                         SteelType=str(window.Lab_2cSteels.text()),  # 钢种
+                                         RealWeight=str(window.Lab_2cWeight.text()),  # 真实重量
+                                         Weighing="否",  # 是否称重
+                                         SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
+                                         IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
+                                         adjustment=str(window.Lab_2cCompensate.text()),  # 补偿值
+                                         density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),
+                                         # 读取数据库里的钢种密度
+                                         theoryWeight=str(window.Lab_2bWeight.text())  # 理论重量
+                                         )
                 # 传给PLC  给M区变量1个值来判断切割
 
             # 3流实例化图像处理
+            if str(config_ini.readvalue('setcamre', 'ceb_threshold_auto_3f')) == 'True':
+                threshold_ratio_switch_F3 = 1
+            elif str(config_ini.readvalue('setcamre', 'ceb_threshold_auto_3f')) == 'False':
+                threshold_ratio_switch_F3 = 0
+
             frameCut_return_f3 = Frame_Cut_Temp.frameCut(
                 frame_cut=frame_cut,
                 cut_y0=float(config_ini.readvalue('setcamre', 'frame_cut_y0_f3')),
@@ -355,7 +375,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 threshold=int(config_ini.readvalue('setcamre', 'threshold_f3')),
                 Start_Cut_state=public['Start_Cut_state_F3'],
                 pullspeed=public['plc_3f_pullspeed'],
-                threshold_ratio=0.4
+                threshold_ratio=0.4,
+                threshold_ratio_switch=threshold_ratio_switch_F3
             )
 
             window.Lab_3cState.setText(frameCut_return_f3['Lab_fcState'])
@@ -375,23 +396,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 window.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
 
                 MainWindow.slot_CutToSQL(self,
-                    FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
-                    FlowNum="3",  # 流号
-                    FixLength=str(window.Lab_3cSetLength.text()),  # 定尺长度
-                    Team=str(window.Btn_Class.text()),  # 班组
-                    SteelType=str(window.Lab_3cSteels.text()),  # 钢种
-                    RealWeight=str(window.Lab_3cWeight.text()),  # 真实重量
-                    Weighing="否",  # 是否称重
-                    SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
-                    IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
-                    adjustment=str(window.Lab_3cCompensate.text()),  # 补偿值
-                    density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),  # 读取数据库里的钢种密度
-                    theoryWeight=str(window.Lab_3bWeight.text())  # 理论重量
-                )
-
-
+                                         FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
+                                         FlowNum="3",  # 流号
+                                         FixLength=str(window.Lab_3cSetLength.text()),  # 定尺长度
+                                         Team=str(window.Btn_Class.text()),  # 班组
+                                         SteelType=str(window.Lab_3cSteels.text()),  # 钢种
+                                         RealWeight=str(window.Lab_3cWeight.text()),  # 真实重量
+                                         Weighing="否",  # 是否称重
+                                         SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
+                                         IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
+                                         adjustment=str(window.Lab_3cCompensate.text()),  # 补偿值
+                                         density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),
+                                         # 读取数据库里的钢种密度
+                                         theoryWeight=str(window.Lab_3bWeight.text())  # 理论重量
+                                         )
 
             # 4流实例化图像处理
+            if str(config_ini.readvalue('setcamre', 'ceb_threshold_auto_4f')) == 'True':
+                threshold_ratio_switch_F4 = 1
+            elif str(config_ini.readvalue('setcamre', 'ceb_threshold_auto_4f')) == 'False':
+                threshold_ratio_switch_F4 = 0
+
             frameCut_return_f4 = Frame_Cut_Temp.frameCut(
                 frame_cut=frame_cut,
                 cut_y0=float(config_ini.readvalue('setcamre', 'frame_cut_y0_f4')),
@@ -405,7 +430,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 threshold=int(config_ini.readvalue('setcamre', 'threshold_f4')),
                 Start_Cut_state=public['Start_Cut_state_F4'],
                 pullspeed=public['plc_4f_pullspeed'],
-                threshold_ratio=0.4
+                threshold_ratio=0.4,
+                threshold_ratio_switch=threshold_ratio_switch_F4
             )
 
             window.Lab_4cState.setText(frameCut_return_f4['Lab_fcState'])
@@ -425,19 +451,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 window.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
 
                 MainWindow.slot_CutToSQL(self,
-                    FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
-                    FlowNum="4",  # 流号
-                    FixLength=str(window.Lab_4cSetLength.text()),  # 定尺长度
-                    Team=str(window.Btn_Class.text()),  # 班组
-                    SteelType=str(window.Lab_4cSteels.text()),  # 钢种
-                    RealWeight=str(window.Lab_4cWeight.text()),  # 真实重量
-                    Weighing="否",  # 是否称重
-                    SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
-                    IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
-                    adjustment=str(window.Lab_4cCompensate.text()),  # 补偿值
-                    density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),  # 读取数据库里的钢种密度
-                    theoryWeight=str(window.Lab_4bWeight.text())  # 理论重量
-                )
+                                         FurNum=str((config_fur.readvalue('FurListData1', 'lne_setfurno'))),
+                                         FlowNum="4",  # 流号
+                                         FixLength=str(window.Lab_4cSetLength.text()),  # 定尺长度
+                                         Team=str(window.Btn_Class.text()),  # 班组
+                                         SteelType=str(window.Lab_4cSteels.text()),  # 钢种
+                                         RealWeight=str(window.Lab_4cWeight.text()),  # 真实重量
+                                         Weighing="否",  # 是否称重
+                                         SetWeight=str(window.Btn_1aSetWeight.text()),  # 设定重量
+                                         IDtime=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),  # 时间
+                                         adjustment=str(window.Lab_4cCompensate.text()),  # 补偿值
+                                         density=str(SQLlite.SQL_readSteeldensity(self.Lab_1cSteels.text())),
+                                         # 读取数据库里的钢种密度
+                                         theoryWeight=str(window.Lab_4bWeight.text())  # 理论重量
+                                         )
 
 
         except Exception as e:
@@ -455,7 +482,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.Btn_Class.setText((config_ini.readvalue('init', 'Btn_Class')))  # 班次
         # self.Lab_talRoot.setText((config_ini.readvalue('init', 'Lab_talRoot')))  # 总记数
         self.Lab_talTon.setText((config_ini.readvalue('init', 'Lab_talTon')))  # 总重量
-        self.Btn_FurNo.setText("炉号:  " + str((config_fur.readvalue('FurListData1','lne_setfurno'))))  # 炉号
+        self.Btn_FurNo.setText("炉号:  " + str((config_fur.readvalue('FurListData1', 'lne_setfurno'))))  # 炉号
         self.Lab_1cSteels.setText((config_ini.readvalue('init', 'Lab_1cSteels')))  # 1流钢种
         self.Lab_2cSteels.setText((config_ini.readvalue('init', 'Lab_2cSteels')))  # 2流钢种
         self.Lab_3cSteels.setText((config_ini.readvalue('init', 'Lab_3cSteels')))  # 3流钢种
@@ -496,16 +523,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         public['temp_Lne_Frame_cut_Y1_F2'] = int(config_ini.readvalue('setcamre', 'frame_cut_y1_f2'))
         public['temp_Lne_Frame_cut_Y1_F3'] = int(config_ini.readvalue('setcamre', 'frame_cut_y1_f3'))
         public['temp_Lne_Frame_cut_Y1_F4'] = int(config_ini.readvalue('setcamre', 'frame_cut_y1_f4'))
-        self.Lab_talRoot.setText(str(int(config_ini.readvalue('init', 'Lab_1cCount'))+int(config_ini.readvalue('init', 'Lab_2cCount'))+int(config_ini.readvalue('init', 'Lab_3cCount'))+int(config_ini.readvalue('init', 'Lab_4cCount'))))
+        self.Lab_talRoot.setText(str(
+            int(config_ini.readvalue('init', 'Lab_1cCount')) + int(config_ini.readvalue('init', 'Lab_2cCount')) + int(
+                config_ini.readvalue('init', 'Lab_3cCount')) + int(config_ini.readvalue('init', 'Lab_4cCount'))))
         self.statuShow('与PLC连接中', 5)
-
 
         # self.Lab_1aTrackValue.setText(str(S7_300.printReadResult(plc.ReadBool("DB2.0.0"))))
 
-
-
     # 状态栏显示函数
-    def statuShow(self,showString,showTime):
+    def statuShow(self, showString, showTime):
         '''
         :param showString:需要在状态栏显示的内容
         :param showTime: 显示的时间*秒
@@ -528,20 +554,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                   (screen.height() - size.height()) / 2)
 
     # 关闭保持数据
-    def slot_close(self,event):
+    def slot_close(self, event):
         try:
             config_ini.writeValue('init', 'smtp_vserver', 'sss')
             config_ini.writeValue('init', 'Lab_talRoot', window.Lab_talRoot.text())  # 总根数写入配置文件
-            config_ini.writeValue('init', 'Lab_talTon', window.Lab_talTon.text())   # 总重量写入配置文件
-        except Exception as e :
+            config_ini.writeValue('init', 'Lab_talTon', window.Lab_talTon.text())  # 总重量写入配置文件
+        except Exception as e:
             print("主程序关闭文件保存错误代码：", e)
         else:
             app = QApplication.instance()
             # 退出应用程序
             app.quit()
 
-
-    def slot_SetFurNo(self):    # 设置炉号
+    def slot_SetFurNo(self):  # 设置炉号
         furno = FurNoPage()
         furno.exec_()
 
@@ -549,7 +574,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Fixleng = FixLengPage()
         Fixleng.exec_()
 
-    def slot_SetTeam(self):     # 设置班组
+    def slot_SetTeam(self):  # 设置班组
         Team = TeamPage()
         Team.exec_()
 
@@ -557,7 +582,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Data = ProductionDataPage()
         Data.exec_()
 
-    def slot_Camera(self):      # 视频参数调整
+    def slot_Camera(self):  # 视频参数调整
         camera = SetCameraPage()
         camera.exec_()
 
@@ -565,11 +590,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         algorithm = AlgorithmPage()
         algorithm.exec_()
 
-    def slot_SetSteelData(self):        # 定尺管理
+    def slot_SetSteelData(self):  # 定尺管理
         steeldata = SetSteelDataPage()
         steeldata.exec_()
 
-    def slot_SetSteelType(self):    # 钢种管理
+    def slot_SetSteelType(self):  # 钢种管理
         steeltypeManage = SetSteelTypePage()
         steeltypeManage.exec_()
 
@@ -587,16 +612,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def slot_Help(self):
         QtWidgets.QMessageBox.question(self, "帮助", "联系计控室",
-                                                     QtWidgets.QMessageBox.Yes )
-
+                                       QtWidgets.QMessageBox.Yes)
 
     def slot_timeOut(self):  # 延时触发该函数定时
-        tm = QTime.currentTime()    # 获取当前时间
-        dd = QDate.currentDate()    # 获取当前日期
+        tm = QTime.currentTime()  # 获取当前时间
+        dd = QDate.currentDate()  # 获取当前日期
         strText = tm.toString("hh:mm:ss")
         self.Lab_Time.setText(strText)
         self.Lab_DateDay.setText(dd.toString(Qt.DefaultLocaleLongDate))
-
 
         # 记数数量大于当炉号根数时，减少炉号1列信息
         try:
@@ -638,9 +661,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         window.Lab_4bTemperature.setText(str(round(float(public['temp_Lab_1bTemperature']), 2)))
 
         # 1流手自动
-        if public['plc_weight_manual_F1'] == True :
+        if public['plc_weight_manual_F1'] == True:
             window.Lab_1cMode.setText('手动')
-        elif public['plc_weight_auto_F1'] == True :
+        elif public['plc_weight_auto_F1'] == True:
             window.Lab_1cMode.setText('自动')
         elif public['plc_weight_manual_F1'] == False or public['plc_weight_auto_F1'] == False:
             window.Lab_1cMode.setText('非手自动')
@@ -648,9 +671,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             window.Lab_1cMode.setText('异常')
 
         # 2流手自动
-        if public['plc_weight_manual_F2'] == True :
+        if public['plc_weight_manual_F2'] == True:
             window.Lab_2cMode.setText('手动')
-        elif public['plc_weight_auto_F2'] == True :
+        elif public['plc_weight_auto_F2'] == True:
             window.Lab_2cMode.setText('自动')
         elif public['plc_weight_manual_F2'] == False or public['plc_weight_auto_F2'] == False:
             window.Lab_2cMode.setText('非手自动')
@@ -658,9 +681,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             window.Lab_2cMode.setText('异常')
 
         # 3流手自动
-        if public['plc_weight_manual_F3'] == True :
+        if public['plc_weight_manual_F3'] == True:
             window.Lab_3cMode.setText('手动')
-        elif public['plc_weight_auto_F3'] == True :
+        elif public['plc_weight_auto_F3'] == True:
             window.Lab_3cMode.setText('自动')
         elif public['plc_weight_manual_F3'] == False or public['plc_weight_auto_F3'] == False:
             window.Lab_3cMode.setText('非手自动')
@@ -668,9 +691,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             window.Lab_3cMode.setText('异常')
 
         # 4流手自动
-        if public['plc_weight_manual_F4'] == True :
+        if public['plc_weight_manual_F4'] == True:
             window.Lab_4cMode.setText('手动')
-        elif public['plc_weight_auto_F4'] == True :
+        elif public['plc_weight_auto_F4'] == True:
             window.Lab_4cMode.setText('自动')
         elif public['plc_weight_manual_F4'] == False or public['plc_weight_auto_F4'] == False:
             window.Lab_4cMode.setText('非手自动')
@@ -678,19 +701,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             window.Lab_4cMode.setText('异常')
 
         # 是否在称重信号
-        if public['plc_weighting_F1'] == True :
+        if public['plc_weighting_F1'] == True:
             window.Lab_1aWeight.setStyleSheet("background-color:green;\n"
-                                       "color:yellow;")
+                                              "color:yellow;")
         else:
             window.Lab_1aWeight.setStyleSheet("background-color:black;\n"
-                           "color:yellow;")
+                                              "color:yellow;")
 
-        if public['plc_weighting_F2'] == True :
+        if public['plc_weighting_F2'] == True:
             window.Lab_1aWeight.setStyleSheet("background-color:green;\n"
-                                       "color:yellow;")
+                                              "color:yellow;")
         else:
             window.Lab_1aWeight.setStyleSheet("background-color:black;\n"
-                           "color:yellow;")
+                                              "color:yellow;")
 
         if public['plc_weighting_F3'] == True:
             window.Lab_1aWeight.setStyleSheet("background-color:green;\n"
@@ -699,17 +722,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             window.Lab_1aWeight.setStyleSheet("background-color:black;\n"
                                               "color:yellow;")
 
-        if public['plc_weighting_F4'] == True :
+        if public['plc_weighting_F4'] == True:
             window.Lab_1aWeight.setStyleSheet("background-color:green;\n"
-                                       "color:yellow;")
+                                              "color:yellow;")
         else:
             window.Lab_1aWeight.setStyleSheet("background-color:black;\n"
-                           "color:yellow;")
+                                              "color:yellow;")
 
-        window.Lab_1cSpeed.setText(str(round(float(public['plc_1f_pullspeed']),2)))
-        window.Lab_2cSpeed.setText(str(round(float(public['plc_2f_pullspeed']),2)))
-        window.Lab_3cSpeed.setText(str(round(float(public['plc_3f_pullspeed']),2)))
-        window.Lab_4cSpeed.setText(str(round(float(public['plc_4f_pullspeed']),2)))
+        window.Lab_1cSpeed.setText(str(round(float(public['plc_1f_pullspeed']), 2)))
+        window.Lab_2cSpeed.setText(str(round(float(public['plc_2f_pullspeed']), 2)))
+        window.Lab_3cSpeed.setText(str(round(float(public['plc_3f_pullspeed']), 2)))
+        window.Lab_4cSpeed.setText(str(round(float(public['plc_4f_pullspeed']), 2)))
 
         # if public['plc_cut_IsSuccess'] == True :
         #     self.Lab_PLCTon.setText("PLC连接成功")
@@ -724,14 +747,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #                                   "color:black\n"
         #                                   "")
 
-    def slot_Synchronizer_timer(self):     # 本地数据库同步82服务器   定时
+    def slot_Synchronizer_timer(self):  # 本地数据库同步82服务器   定时
         try:
-            SynchronizerRun  = SQLData_Synchronizer.SQL_Synchronizer
+            SynchronizerRun = SQLData_Synchronizer.SQL_Synchronizer
             SynchronizerRun()
             print("数据库同步成功")
         except Exception as e:
             print("数据库同步失败", e)
-
 
 
 class FurNoPage(QDialog, UI_SetFurNo.Ui_Dialog):  # 炉号
@@ -745,33 +767,34 @@ class FurNoPage(QDialog, UI_SetFurNo.Ui_Dialog):  # 炉号
         # 显示列表信息
         for i in range(1, 11):
             Furstr = 'FurListData' + str(i)
-            if int(config_fur.readvalue(Furstr, 'show')) == 1:     # 判断在第几个开始显示
+            if int(config_fur.readvalue(Furstr, 'show')) == 1:  # 判断在第几个开始显示
                 a = "炉号" + config_fur.readvalue(Furstr, 'lne_setfurno')
                 b = "根数" + config_fur.readvalue(Furstr, 'lne_setfurnum')
                 self.LW_SetFurNo.addItem(a + b)
 
         self.Btn_Exit.clicked.connect(self.close)
-        self.Btn_addFurNum.clicked.connect(self.slot_addFurNum)     # 增加项
-        self.Btn_delFurNum.clicked.connect(self.slot_delFurNum)     # 删除项
-        self.LW_SetFurNo.setSelectionMode(QAbstractItemView.SingleSelection)     # 单项处理
+        self.Btn_addFurNum.clicked.connect(self.slot_addFurNum)  # 增加项
+        self.Btn_delFurNum.clicked.connect(self.slot_delFurNum)  # 删除项
+        self.LW_SetFurNo.setSelectionMode(QAbstractItemView.SingleSelection)  # 单项处理
         self.LW_SetFurNo.itemClicked.connect(self.slot_SetFurNoItemCliked)  # 单击触发 提示
-        self.LW_SetFurNo.currentItemChanged.connect(self.slot_SetFurNoItemDoubleClicked)    # 选中项前后字体变色
+        self.LW_SetFurNo.currentItemChanged.connect(self.slot_SetFurNoItemDoubleClicked)  # 选中项前后字体变色
 
     # 炉号列表增加
     def slot_addFurNum(self):
-        strNo =self.Lne_SetFurNo.text()
+        strNo = self.Lne_SetFurNo.text()
         strNum = self.Lne_SetFurNum.text()
 
         if len(strNo) > 0 and len(strNum) > 0:  # 判断是否输入
             # 修改配置文件
             for i in range(1, 11):
-                Furstr = 'FurListData' + str(i)     # 配置文件中，名称
+                Furstr = 'FurListData' + str(i)  # 配置文件中，名称
                 if int(config_fur.readvalue(Furstr, 'show')) == 0:  #
-                    config_fur.readvalue(Furstr, 'row')     # 获取未显示行数
-                    config_fur.writeValue(Furstr,'lne_setfurno',self.Lne_SetFurNo.text())
+                    config_fur.readvalue(Furstr, 'row')  # 获取未显示行数
+                    config_fur.writeValue(Furstr, 'lne_setfurno', self.Lne_SetFurNo.text())
                     config_fur.writeValue(Furstr, 'lne_setfurnum', self.Lne_SetFurNum.text())
                     config_fur.writeValue(Furstr, 'show', '1')
-                    self.LW_SetFurNo.addItem('炉号' + str(self.Lne_SetFurNo.text()) + '根数' + str(self.Lne_SetFurNum.text()))
+                    self.LW_SetFurNo.addItem(
+                        '炉号' + str(self.Lne_SetFurNo.text()) + '根数' + str(self.Lne_SetFurNum.text()))
                     # window.autoShow()
                     break
         else:
@@ -780,20 +803,20 @@ class FurNoPage(QDialog, UI_SetFurNo.Ui_Dialog):  # 炉号
 
     # 炉号列表指定删除
     def slot_delFurNum(self):
-        pItem = self.LW_SetFurNo.currentItem()   # 得到左侧列表选中项
+        pItem = self.LW_SetFurNo.currentItem()  # 得到左侧列表选中项
         if pItem is None:
             return
-        idx = self.LW_SetFurNo.row(pItem)   # 得到项的序号  所在行 idx =>int
+        idx = self.LW_SetFurNo.row(pItem)  # 得到项的序号  所在行 idx =>int
         # print(pItem.text())  # 所选行的文本
         # Furstr = 'FurListData' + str(idx)  # 配置文件中，名称
         # print(idx)  #选择行数
         print(idx)
         self.LW_SetFurNo.takeItem(idx)
-        if idx == 9:   # 当选择最后一列，直接隐藏
+        if idx == 9:  # 当选择最后一列，直接隐藏
             config_fur.writeValue('FurListData10', 'show', '0')
             window.autoShow()
         else:
-            for i in range(idx,9):
+            for i in range(idx, 9):
                 j = 'FurListData' + str(i + 1)
                 k = 'FurListData' + str(i + 2)
                 config_fur.writeValue(j, 'lne_setfurno', config_fur.readvalue(k, 'lne_setfurno'))
@@ -825,11 +848,11 @@ class FurNoPage(QDialog, UI_SetFurNo.Ui_Dialog):  # 炉号
             return
         else:
             self.LW_SetFurNo.takeItem(idx)
-            if idx == 9:   # 当选择最后一列，直接隐藏
+            if idx == 9:  # 当选择最后一列，直接隐藏
                 config_fur.writeValue('FurListData10', 'show', '0')
                 window.autoShow()
             else:
-                for i in range(idx,9):
+                for i in range(idx, 9):
                     j = 'FurListData' + str(i + 1)
                     k = 'FurListData' + str(i + 2)
                     config_fur.writeValue(j, 'lne_setfurno', config_fur.readvalue(k, 'lne_setfurno'))
@@ -838,10 +861,10 @@ class FurNoPage(QDialog, UI_SetFurNo.Ui_Dialog):  # 炉号
                 for s in range(idx + 1, 11):
                     l = 'FurListData' + str(s)  # 配置文件中，名称
                     if int(config_fur.readvalue(l, 'show')) == 0:
-                        for j in range(s - 1,11):
+                        for j in range(s - 1, 11):
                             m = 'FurListData' + str(j)  # 配置文件中，名称
                             config_fur.writeValue(m, 'show', '0')
-                            if j == 10 :
+                            if j == 10:
                                 window.autoShow()
                                 return
                     elif int(config_fur.readvalue('FurListData10', 'show')) == 1:
@@ -855,19 +878,20 @@ class FurNoPage(QDialog, UI_SetFurNo.Ui_Dialog):  # 炉号
         item.setFont(ft)
 
     def slot_SetFurNoItemDoubleClicked(self, current, previous):  # current 新选中的项  previous之前选中的项
-        #将之前选中的字体粗体恢复
+        # 将之前选中的字体粗体恢复
         if not (previous is None):
             ft = previous.font()
             ft.setBold(False)
             previous.setFont(ft)
 
-class FixLengPage(QDialog,UI_SetFixLeng.Ui_Dialog): #设置输入定尺
-    def __init__(self,parent = None):
-        super(FixLengPage,self).__init__(parent)
+
+class FixLengPage(QDialog, UI_SetFixLeng.Ui_Dialog):  # 设置输入定尺
+    def __init__(self, parent=None):
+        super(FixLengPage, self).__init__(parent)
         self.setupUi(self)
 
-        #输入限制
-        self.Lne_FixLength.setValidator(QIntValidator(0, 65535)) #设置输入整形数字范围
+        # 输入限制
+        self.Lne_FixLength.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
         self.Lne_PreClampOffset.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
         self.Lne_TheoryWeiht.setValidator(QIntValidator(0, 65535))  # 设置输入整形数字范围
         self.Lne_Density.setValidator(QDoubleValidator())  # 设置输入浮点数字范围
@@ -887,112 +911,112 @@ class FixLengPage(QDialog,UI_SetFixLeng.Ui_Dialog): #设置输入定尺
         self.Lne_Density.setEnabled(False)
         self.Btn_FixLengYes.clicked.connect(self.slot_SaveData)
 
-
-    def slot_editEnabled(self,b):       #b勾选编辑
+    def slot_editEnabled(self, b):  # b勾选编辑
         self.Lne_FixWeiht.setEnabled(b)
         self.Lne_TheoryWeiht.setEnabled(b)
         self.Lne_Density.setEnabled(b)
-        self.Lne_FixWeiht.setValidator(QIntValidator(0,50000,self.Lne_FixWeiht))  #QIntValidator 整数的有效判断，范围0-300
+        self.Lne_FixWeiht.setValidator(QIntValidator(0, 50000, self.Lne_FixWeiht))  # QIntValidator 整数的有效判断，范围0-300
 
     def slot_SaveData(self):
         if len(self.Lne_FixLength.text()) > 0 \
-                and len(self.Lne_FixWeiht.text()) > 0  \
+                and len(self.Lne_FixWeiht.text()) > 0 \
                 and len(self.Lne_Density.text()) > 0 \
                 and len(self.Lne_ErrRangeMinus.text()) > 0 \
                 and len(self.Lne_ErrRangePlus.text()) > 0 \
                 and len(self.Lne_PreClampOffset.text()) > 0 \
                 and len(self.Lne_TheoryWeiht.text()) > 0 \
                 and len(self.Lne_LengthRangeMax.text()) > 0 \
-                and len(self.Lne_WeightMax.text()) > 0 :
+                and len(self.Lne_WeightMax.text()) > 0:
+
+            # conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
+            # cursor = conn.cursor()
+            sql = 'SELECT * FROM `fixsteeldata`'
+            cursor.execute(sql)
+            # conn.commit()
+            data = cursor.fetchall()
+            if data:
+                for row, form in enumerate(data):
+                    # for column,item in enumerate(form[0]):
+                    #     self.TW_lengthType.setItem(row,column,QTableWidgetItem(str(form[0])))
+                    #     column += 1
+                    #     print(row,form[0])
+                    print(row, form[0])
+                    SQLname = str(self.Lne_FixLength.text()) + ' 预夹=' + str(
+                        self.Lne_PreClampOffset.text()) + ' 定重目标=' + str(self.Lne_FixWeiht.text())
+                    if SQLname in form[0]:
+                        QtWidgets.QMessageBox.question(self, "提示", "有重复",
+                                                       QtWidgets.QMessageBox.Yes)
+                        return
+
+            try:
+                window.Btn_1aSetWeight.setText(self.Lne_FixLength.text())  # 1流定重设置显示
+                window.Btn_2aSetWeight.setText(self.Lne_FixLength.text())  # 2流定重设置显示
+                window.Btn_3aSetWeight.setText(self.Lne_FixLength.text())  # 3流定重设置显示
+                window.Btn_4aSetWeight.setText(self.Lne_FixLength.text())  # 4流定重设置显示
+                config_ini.writeValue('init', 'Btn_1aSetWeight', self.Lne_FixLength.text())
+                config_ini.writeValue('init', 'Btn_2aSetWeight', self.Lne_FixLength.text())
+                config_ini.writeValue('init', 'Btn_3aSetWeight', self.Lne_FixLength.text())
+                config_ini.writeValue('init', 'Btn_4aSetWeight', self.Lne_FixLength.text())
+
+                SQLname = str(self.Lne_FixLength.text()) + ' 预夹=' + str(
+                    self.Lne_PreClampOffset.text()) + ' 定重目标=' + str(self.Lne_FixWeiht.text())
 
                 # conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
                 # cursor = conn.cursor()
-                sql = 'SELECT * FROM `fixsteeldata`'
-                cursor.execute(sql)
-                # conn.commit()
-                data = cursor.fetchall()
-                if data:
-                    for row, form in enumerate(data):
-                        # for column,item in enumerate(form[0]):
-                        #     self.TW_lengthType.setItem(row,column,QTableWidgetItem(str(form[0])))
-                        #     column += 1
-                        #     print(row,form[0])
-                        print(row,form[0])
-                        SQLname = str(self.Lne_FixLength.text()) + ' 预夹=' + str(
-                            self.Lne_PreClampOffset.text()) + ' 定重目标=' + str(self.Lne_FixWeiht.text())
-                        if SQLname  in form[0]:
-                            QtWidgets.QMessageBox.question(self, "提示", "有重复",
-                                                           QtWidgets.QMessageBox.Yes)
-                            return
+                cursor.execute("INSERT INTO fixsteeldata ("
+                               "SteelName, "  # 定长名称
+                               "FixLength,"  # 定长
+                               "FixWeiht,"  # 定长重量
+                               "Density,"  # 密度
+                               "ErrRangeMinus,"  # 误差范围负
+                               "ErrRangePlus,"  # 误差范围正
+                               "PreClampOffset,"  # 预夹
+                               "TheoryWeiht,"  # 理论重量
+                               "LengthRangeMax,"  # 最大调节范围   
+                               "WeightMax ) "  # 对应重量
 
-                try:
-                    window.Btn_1aSetWeight.setText(self.Lne_FixLength.text())  # 1流定重设置显示
-                    window.Btn_2aSetWeight.setText(self.Lne_FixLength.text())  # 2流定重设置显示
-                    window.Btn_3aSetWeight.setText(self.Lne_FixLength.text())  # 3流定重设置显示
-                    window.Btn_4aSetWeight.setText(self.Lne_FixLength.text())  # 4流定重设置显示
-                    config_ini.writeValue('init', 'Btn_1aSetWeight', self.Lne_FixLength.text())
-                    config_ini.writeValue('init', 'Btn_2aSetWeight', self.Lne_FixLength.text())
-                    config_ini.writeValue('init', 'Btn_3aSetWeight', self.Lne_FixLength.text())
-                    config_ini.writeValue('init', 'Btn_4aSetWeight', self.Lne_FixLength.text())
+                               " VALUES (" + "'" +
+                               SQLname + "','" +
+                               self.Lne_FixLength.text() + "','" +
+                               self.Lne_FixWeiht.text() + "','" +
+                               self.Lne_Density.text() + "','" +
+                               self.Lne_ErrRangeMinus.text() + "','" +
+                               self.Lne_ErrRangePlus.text() + "','" +
+                               self.Lne_PreClampOffset.text() + "','" +
+                               self.Lne_TheoryWeiht.text() + "','" +
+                               self.Lne_LengthRangeMax.text() + "','" +
+                               self.Lne_WeightMax.text() + "');")
+                conn.commit()
 
-                    SQLname = str(self.Lne_FixLength.text()) + ' 预夹=' + str(self.Lne_PreClampOffset.text()) + ' 定重目标=' + str(self.Lne_FixWeiht.text())
+            except Exception as e:
+                print("数据库写入错误", e)
+                QtWidgets.QMessageBox.question(self, "数据库写入错误", e,
+                                               QtWidgets.QMessageBox.Yes)
 
-                    # conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
-                    # cursor = conn.cursor()
-                    cursor.execute("INSERT INTO fixsteeldata ("
-                                   "SteelName, "    #定长名称
-                                   "FixLength,"     #定长
-                                   "FixWeiht,"      #定长重量
-                                   "Density,"       #密度
-                                   "ErrRangeMinus," #误差范围负
-                                   "ErrRangePlus,"  #误差范围正
-                                   "PreClampOffset,"    #预夹
-                                   "TheoryWeiht,"   #理论重量
-                                   "LengthRangeMax,"  #最大调节范围   
-                                   "WeightMax ) "       #对应重量
-                                   
-                                   " VALUES ("+"'" +
-                                   SQLname + "','" +
-                                   self.Lne_FixLength.text()  +"','"+
-                                   self.Lne_FixWeiht.text() +"','" +
-                                   self.Lne_Density.text() +"','" +
-                                   self.Lne_ErrRangeMinus.text() + "','"+
-                                   self.Lne_ErrRangePlus.text() +"','" +
-                                   self.Lne_PreClampOffset.text() +"','" +
-                                   self.Lne_TheoryWeiht.text() +"','" +
-                                   self.Lne_LengthRangeMax.text() + "','"+
-                                   self.Lne_WeightMax.text() +"');")
-                    conn.commit()
-
-                except Exception as e :
-                   print("数据库写入错误", e)
-                   QtWidgets.QMessageBox.question(self, "数据库写入错误",e,
-                                                  QtWidgets.QMessageBox.Yes)
-
-                else:
-                    QtWidgets.QMessageBox.question(self, "提示", "添加成功",
-                                                   QtWidgets.QMessageBox.Yes)
-                    self.close()
+            else:
+                QtWidgets.QMessageBox.question(self, "提示", "添加成功",
+                                               QtWidgets.QMessageBox.Yes)
+                self.close()
         else:
-                    QtWidgets.QMessageBox.question(self, "提示", "请输入参数",
-                                                   QtWidgets.QMessageBox.Yes)
+            QtWidgets.QMessageBox.question(self, "提示", "请输入参数",
+                                           QtWidgets.QMessageBox.Yes)
 
 
-class TeamPage(QDialog,UI_SetTeam.Ui_Dialog): #设置班组
+class TeamPage(QDialog, UI_SetTeam.Ui_Dialog):  # 设置班组
 
-    def __init__(self, parent = None):
-        super(TeamPage,self).__init__(parent)
+    def __init__(self, parent=None):
+        super(TeamPage, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_TeamNo.clicked.connect(self.close)
         self.Btn_TeamYes.clicked.connect(self.slot_ChangeLocYes)
         self.Btn_TeamYes.clicked.connect(self.close)
 
-    def slot_ChangeLocYes(self):                               #????????????????????限制输入
+    def slot_ChangeLocYes(self):  # ????????????????????限制输入
         Cbb_SetTeamText = self.Cbb_SetTeam.currentText()
-        window.Btn_Class.setText(Cbb_SetTeamText)   #修改窗口显示班组
+        window.Btn_Class.setText(Cbb_SetTeamText)  # 修改窗口显示班组
 
-        config_ini.writeValue('init', 'Btn_Class', Cbb_SetTeamText) #写入config.ini文件
+        config_ini.writeValue('init', 'Btn_Class', Cbb_SetTeamText)  # 写入config.ini文件
         window.Lab_talRoot.setText('0')
         window.Lab_talTon.setText('0')
         window.Lab_1cCount.setText('0')
@@ -1003,27 +1027,28 @@ class TeamPage(QDialog,UI_SetTeam.Ui_Dialog): #设置班组
         # 保存该班组的总根数
         config_ini.writeValue('init', 'Lab_talRoot', '0')  # 写入总根数为0
         # 保持该班组的总重量
-        config_ini.writeValue('init', 'Lab_talTon', '0')   # 写入总重量为0
+        config_ini.writeValue('init', 'Lab_talTon', '0')  # 写入总重量为0
         # 写入流次记数清零
         config_ini.writeValue('init', 'Lab_1cCount', '0')
         config_ini.writeValue('init', 'Lab_2cCount', '0')
         config_ini.writeValue('init', 'Lab_3cCount', '0')
         config_ini.writeValue('init', 'Lab_4cCount', '0')
 
-class ProductionDataPage(QDialog,UI_ProductionData.Ui_Dialog):      #生产数据
-    def __init__(self,parent = None):
-        super(ProductionDataPage,self).__init__(parent)
+
+class ProductionDataPage(QDialog, UI_ProductionData.Ui_Dialog):  # 生产数据
+    def __init__(self, parent=None):
+        super(ProductionDataPage, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         # self.Btn_PrintSupport.clicked.connect(self.slot_printSupport)   # 打印
         self.Btn_excelExport.clicked.connect(self.slot_excelExport)  # 导出excel
-        self.Btn_Query.clicked.connect(self.slot_ReadSQLProductionDataQuery)    # 查询
+        self.Btn_Query.clicked.connect(self.slot_ReadSQLProductionDataQuery)  # 查询
         self.autoShow()
         # self.editor = QTextEdit('默认文本',self)
         # self.editor.setGeometry(20,60,260,200)
 
     def autoShow(self):
-        self.Det_DateRangeFrom.setDate(QDate.currentDate())     # 默认当前日期
+        self.Det_DateRangeFrom.setDate(QDate.currentDate())  # 默认当前日期
         self.Det_DateRangeTo.setDate(QDate.currentDate())
         try:
             sql = 'SELECT * FROM `steeltype`'
@@ -1037,7 +1062,7 @@ class ProductionDataPage(QDialog,UI_ProductionData.Ui_Dialog):      #生产数�
                     for steeltypeNum in range(len(steeltypedata)):
                         self.cb_selectSteelType.addItem(str(steeltypedata[steeltypeNum][0]))
             except Exception as e:
-                window.statuShow(e,5)
+                window.statuShow(e, 5)
 
         except Exception as e:
             window.statuShow(e, 5)
@@ -1054,7 +1079,8 @@ class ProductionDataPage(QDialog,UI_ProductionData.Ui_Dialog):      #生产数�
         selectTimeTo = self.Tet_TimeRangeTo.text()  # 选择的结束时间
         selectDateTimeFrom = str(selectDayFrom) + " " + str(selectTimeFrom)  # 拼接开始日期时间
         selectDateTimeTo = str(selectDayTo) + " " + str(selectTimeTo)  # 拼接结束日期时间
-        SQLbody_DateTime = " and IDtime >= '"+ str(selectDateTimeFrom) + "' and IDtime <= '"+ str(selectDateTimeTo) + "'"
+        SQLbody_DateTime = " and IDtime >= '" + str(selectDateTimeFrom) + "' and IDtime <= '" + str(
+            selectDateTimeTo) + "'"
 
         # 流号
         if self.cb_selectFlow.currentText() == "全部":
@@ -1074,14 +1100,18 @@ class ProductionDataPage(QDialog,UI_ProductionData.Ui_Dialog):      #生产数�
 
         selectLengRangeFrom = self.Lne_LengRangeFrom.text()  # 选择的定尺开始范围
         selectLengRangeTo = self.Lne_LengRangeTo.text()  # 选择的定尺结束范围
-        SQLbody_LengRange = " and FixLength >= '" + str(selectLengRangeFrom) + "' and FixLength <= '"+ str(selectLengRangeTo) + "'"
+        SQLbody_LengRange = " and FixLength >= '" + str(selectLengRangeFrom) + "' and FixLength <= '" + str(
+            selectLengRangeTo) + "'"
 
         selectsetWeightFrom = self.Lne_SetWeightFrom.text()  # 选择的重量目标开始范围
         selectsetWeightTo = self.Lne_SetWeightTo.text()  # 选择的重量目标结束范围
-        SQLbody_setWeight = " and SetWeight >= '"+ str(selectsetWeightFrom) + "' and SetWeight <= '"+ str(selectsetWeightTo) + "'"
+        SQLbody_setWeight = " and SetWeight >= '" + str(selectsetWeightFrom) + "' and SetWeight <= '" + str(
+            selectsetWeightTo) + "'"
         sqlheader = "SELECT * FROM `productiondata` WHERE 1=1 "
         try:
-            sql = "" + str(sqlheader) + "" + str(SQLbody_DateTime) + "" + str(SQLbody_selectFlow) + "" + str(SQLbody_selectTeam) + "" + str(SQLbody_selectSteelType) + "" + str(SQLbody_LengRange) + "" + str(SQLbody_setWeight) + ""
+            sql = "" + str(sqlheader) + "" + str(SQLbody_DateTime) + "" + str(SQLbody_selectFlow) + "" + str(
+                SQLbody_selectTeam) + "" + str(SQLbody_selectSteelType) + "" + str(SQLbody_LengRange) + "" + str(
+                SQLbody_setWeight) + ""
             print(sql)
             cursor.execute(sql)
             fixsteelSqldata = cursor.fetchall()
@@ -1094,7 +1124,8 @@ class ProductionDataPage(QDialog,UI_ProductionData.Ui_Dialog):      #生产数�
                     # 设置种类行数
                     self.TaW_ProductionData.setColumnCount(9)
                     # 设置水平方向的表头标签与垂直方向上的表头标签，注意必须在初始化行列之后进行，否则，没有效果
-                    self.TaW_ProductionData.setHorizontalHeaderLabels(["流号", "炉号", "定尺", "班次", "钢种","实际重量", "是否称重", "设置重量", "时间"])
+                    self.TaW_ProductionData.setHorizontalHeaderLabels(
+                        ["流号", "炉号", "定尺", "班次", "钢种", "实际重量", "是否称重", "设置重量", "时间"])
                     # 禁止编辑
                     self.TaW_ProductionData.setEditTriggers(QAbstractItemView.NoEditTriggers)
                     # TODO 优化 2 设置水平方向表格为自适应的伸缩模式
@@ -1116,34 +1147,36 @@ class ProductionDataPage(QDialog,UI_ProductionData.Ui_Dialog):      #生产数�
                     # print(fixsteelSqldata)  # 数据库查询中的数据
                     excelData = []
                     for i in range(len(fixsteelSqldata)):
-                        excelDataColumns = []   # 初始化excel行数据
+                        excelDataColumns = []  # 初始化excel行数据
                         for j in range(len(fixsteelSqldata[i])):
-
                             itemContent = "%s" % (fixsteelSqldata[i][j])
-                            excelDataColumns.append(itemContent)    # 增加excel单行数据
+                            excelDataColumns.append(itemContent)  # 增加excel单行数据
 
                             # 为每个表格内添加数据
                             self.TaW_ProductionData.setItem(i, j, QTableWidgetItem(itemContent))
                         excelData.append(excelDataColumns)  # 增加excel数据
                         layout.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
-                    self.df = pd.DataFrame(excelData,columns=['流号', '炉号', '定尺', '班次', '钢种', '实际重量', '是否称重', '设置重量', '时间', '调整值', '密度', '理论重量'])
+                    self.df = pd.DataFrame(excelData,
+                                           columns=['流号', '炉号', '定尺', '班次', '钢种', '实际重量', '是否称重', '设置重量', '时间', '调整值',
+                                                    '密度', '理论重量'])
                     self.setLayout(layout)
 
 
             except Exception as e:
-                window.statuShow(e,5)
+                window.statuShow(e, 5)
                 print("查询生产数据现场错误代码：", e)
         except Exception as e:
             window.statuShow(e, 5)
             print("查询生产数据错误代码：", e)
 
-
-    def slot_setweighten(self,b):
+    def slot_setweighten(self, b):
         self.Lne_SetWeight.setEnabled(b)
         self.Lne_SetWeight.setCursorPosition(0)  # 光标定位
+
     def slot_lengrangeen(self, b):
         self.Lne_LengRangeFrom.setEnabled(b)
         self.Lne_LengRangeTo.setEnabled(b)
+
     def slot_timerangeen(self, b):
         self.Tet_TimeRangeFrom.setEnabled(b)
         self.Tet_TimeRangeTo.setEnabled(b)
@@ -1155,26 +1188,26 @@ class ProductionDataPage(QDialog,UI_ProductionData.Ui_Dialog):      #生产数�
         # self.Lne_DateRangeFrom.setText("0000-00-00")
 
     def slot_printSupport(self):
-        printer =  QtPrintSupport.QPrinter()
-        #画布绘制出来
+        printer = QtPrintSupport.QPrinter()
+        # 画布绘制出来
         painter = QtGui.QPainter()
         # 绘制的目标重定向到打印机
         painter.begin(printer)
         # 获得可视的屏幕
         screen = self.editor.grab()
-        painter.drawPixmap(10,10,screen)
+        painter.drawPixmap(10, 10, screen)
         painter.end()
 
     def slot_excelExport(self):
         try:
-            self.df.to_excel('导出生产数据.xlsx',index=False)
+            self.df.to_excel('导出生产数据.xlsx', index=False)
         except Exception as e:
             print("excel 导出错误代码：", e)
 
 
-class AlgorithmPage(QDialog,UI_SetAlgorithm.Ui_Dialog):
-    def __init__(self,parent = None):
-        super(AlgorithmPage,self).__init__(parent)
+class AlgorithmPage(QDialog, UI_SetAlgorithm.Ui_Dialog):
+    def __init__(self, parent=None):
+        super(AlgorithmPage, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Lne_SetCutLimt_f1.setValidator(QIntValidator(0, 900))  # 设置输入整形数字范围
@@ -1197,9 +1230,10 @@ class AlgorithmPage(QDialog,UI_SetAlgorithm.Ui_Dialog):
         config_ini.writeValue('setcamre', 'setcutlimt_f3', str(self.Lne_SetCutLimt_f3.text()))
         config_ini.writeValue('setcamre', 'setcutlimt_f4', str(self.Lne_SetCutLimt_f4.text()))
 
-class SetCameraPage(QDialog,UI_SetCamera.Ui_Dialog):
-    def __init__(self,parent = None):
-        super(SetCameraPage,self).__init__(parent)
+
+class SetCameraPage(QDialog, UI_SetCamera.Ui_Dialog):
+    def __init__(self, parent=None):
+        super(SetCameraPage, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         self.Btn_Exit.clicked.connect(self.close)
@@ -1209,9 +1243,14 @@ class SetCameraPage(QDialog,UI_SetCamera.Ui_Dialog):
         self.Lne_Threshold_f3.setValidator(QIntValidator(0, 255))  # 设置输入整形数字范围
         self.Lne_Threshold_f4.setValidator(QIntValidator(0, 255))  # 设置输入整形数字范围
         self.Lne_SetCameraFlip.setValidator(QIntValidator(-1, 2))  # 设置输入整形数字范围
+        self.Lne_Threshold_ratio_f1.setValidator(QDoubleValidator())  # 设置输入浮点数字范围
         self.Btn_CameraSetAeState_auto.clicked.connect(self.slot_CameraSetAeState_auto)
         self.Btn_CameraSetAeState_man.clicked.connect(self.slot_CameraSetAeState_man)
         self.horizontalSlider_Light.valueChanged.connect(self.valChange)
+        self.Ceb_Threshold_auto_f1.stateChanged.connect(self.slot_Change_Threshold_auto_1f)  # 自动阈值比的开关及输入比例值的使能
+        self.Ceb_Threshold_auto_f2.stateChanged.connect(self.slot_Change_Threshold_auto_2f)
+        self.Ceb_Threshold_auto_f3.stateChanged.connect(self.slot_Change_Threshold_auto_3f)
+        self.Ceb_Threshold_auto_f4.stateChanged.connect(self.slot_Change_Threshold_auto_4f)
 
         self.horizontalSlider_Light.setMinimum(00)  # 最小值
         self.horizontalSlider_Light.setMaximum(1000)  # 最大值
@@ -1222,19 +1261,43 @@ class SetCameraPage(QDialog,UI_SetCamera.Ui_Dialog):
 
     def autoShow(self):
         try:
+            self.Ceb_Threshold_auto_f4.setTristate(True)
             self.Lne_Threshold_f1.setText(config_ini.readvalue('setcamre', 'threshold_f1'))
             self.Lne_Threshold_f2.setText(config_ini.readvalue('setcamre', 'threshold_f2'))
             self.Lne_Threshold_f3.setText(config_ini.readvalue('setcamre', 'threshold_f3'))
             self.Lne_Threshold_f4.setText(config_ini.readvalue('setcamre', 'threshold_f4'))
+            self.Lne_Threshold_ratio_f1.setText(config_ini.readvalue('setcamre', 'threshold_auto_1f'))
+            self.Lne_Threshold_ratio_f2.setText(config_ini.readvalue('setcamre', 'threshold_auto_2f'))
+            self.Lne_Threshold_ratio_f3.setText(config_ini.readvalue('setcamre', 'threshold_auto_3f'))
+            self.Lne_Threshold_ratio_f4.setText(config_ini.readvalue('setcamre', 'threshold_auto_4f'))
+
             self.Lne_SetCameraFlip.setText(config_ini.readvalue('setcamre', 'flip'))
             self.Lab_LightValue.setNum(int(config_ini.readvalue('setcamre', 'camerasetexposuretime')))
             self.horizontalSlider_Light.setValue(int(config_ini.readvalue('setcamre', 'camerasetexposuretime')))
+
             if int(config_ini.readvalue('setcamre', 'camerasetaestate')) == 1:
                 self.Lab_CameraSetAeState.setText('自动模式')
             elif int(config_ini.readvalue('setcamre', 'camerasetaestate')) == 0:
                 self.Lab_CameraSetAeState.setText('手动模式')
             else:
                 print("错误")
+
+            # 判断自动阈值比的开关及输入比例值的使能
+            if 'True' == config_ini.readvalue('setcamre', 'Ceb_Threshold_auto_1f'):
+                # self.Ceb_Threshold_auto_f1.stateChanged.connect(self.slot_Change_Threshold_auto_1f)
+                self.Ceb_Threshold_auto_f1.setChecked(True)
+            if 'True' == config_ini.readvalue('setcamre', 'Ceb_Threshold_auto_2f'):
+                # self.Ceb_Threshold_auto_f2.stateChanged.connect(self.slot_Change_Threshold_auto_1f)
+                self.Ceb_Threshold_auto_f2.setChecked(True)
+            if 'True' == config_ini.readvalue('setcamre', 'Ceb_Threshold_auto_3f'):
+                # self.Ceb_Threshold_auto_f3.stateChanged.connect(self.slot_Change_Threshold_auto_1f)
+                self.Ceb_Threshold_auto_f3.setChecked(True)
+            if 'True' == config_ini.readvalue('setcamre', 'Ceb_Threshold_auto_4f'):
+                # self.Ceb_Threshold_auto_f4.stateChanged.connect(self.slot_Change_Threshold_auto_1f)
+                self.Ceb_Threshold_auto_f4.setChecked(True)
+
+            # print(self.Ceb_Threshold_auto_f4.isChecked())  # 判断被选择中状态
+            # print(self.Ceb_Threshold_auto_f4.checkState())  # 来判断当前状态
 
         except Exception as e:
             print("相机设置刷新错误代码：", e)
@@ -1248,7 +1311,7 @@ class SetCameraPage(QDialog,UI_SetCamera.Ui_Dialog):
             mvsdk.CameraSaveParameter(hCamera, 0)
             print(int(config_ini.readvalue('setcamre', 'camerasetexposuretime')) * 1000)
         except Exception as e:
-            print("调整亮度函数错误:",e)
+            print("调整亮度函数错误:", e)
             QtWidgets.QMessageBox.question(self, "提示", "调整亮度函数错误",
                                            QtWidgets.QMessageBox.Yes)
         # self.Lab_LightValue.setFont(QFont("微软雅黑", self.horizontalSlider_Light.value()))
@@ -1267,30 +1330,56 @@ class SetCameraPage(QDialog,UI_SetCamera.Ui_Dialog):
         mvsdk.CameraSaveParameter(hCamera, 0)
         self.autoShow()
 
+    # 修改阈值比例输入的使能
+    def slot_Change_Threshold_auto_1f(self, b):  # b勾选编辑
+        self.Lne_Threshold_ratio_f1.setEnabled(b)
+    def slot_Change_Threshold_auto_2f(self, b):  # b勾选编辑
+        self.Lne_Threshold_ratio_f2.setEnabled(b)
+    def slot_Change_Threshold_auto_3f(self, b):  # b勾选编辑
+        self.Lne_Threshold_ratio_f3.setEnabled(b)
+    def slot_Change_Threshold_auto_4f(self, b):  # b勾选编辑
+        self.Lne_Threshold_ratio_f4.setEnabled(b)
+
+
+
     # 保存阈值
     def slot_savedate(self):
         try:
-            if (0 <= int(self.Lne_Threshold_f1.text()) and int(self.Lne_Threshold_f1.text()) <= 255) and (0 <= int(self.Lne_Threshold_f2.text()) and int(self.Lne_Threshold_f2.text()) <= 255) and (0 <= int(self.Lne_Threshold_f3.text()) and int(self.Lne_Threshold_f3.text()) <= 255) and (0 <= int(self.Lne_Threshold_f4.text()) and int(self.Lne_Threshold_f4.text()) <= 255) and len(self.Lne_SetCameraFlip.text()) > 0:
+            if (0 <= int(self.Lne_Threshold_f1.text()) and int(self.Lne_Threshold_f1.text()) <= 255) and (
+                    0 <= int(self.Lne_Threshold_f2.text()) and int(self.Lne_Threshold_f2.text()) <= 255) and (
+                    0 <= int(self.Lne_Threshold_f3.text()) and int(self.Lne_Threshold_f3.text()) <= 255) and (
+                    0 <= int(self.Lne_Threshold_f4.text()) and int(self.Lne_Threshold_f4.text()) <= 255) and len(
+                    self.Lne_SetCameraFlip.text()) > 0:
                 config_ini.writeValue('setcamre', 'threshold_f1', self.Lne_Threshold_f1.text())
                 config_ini.writeValue('setcamre', 'threshold_f2', self.Lne_Threshold_f2.text())
                 config_ini.writeValue('setcamre', 'threshold_f3', self.Lne_Threshold_f3.text())
                 config_ini.writeValue('setcamre', 'threshold_f4', self.Lne_Threshold_f4.text())
                 config_ini.writeValue('setcamre', 'flip', self.Lne_SetCameraFlip.text())
+                config_ini.writeValue('setcamre', 'Ceb_Threshold_auto_1f', str(self.Ceb_Threshold_auto_f1.isChecked()))
+                config_ini.writeValue('setcamre', 'Ceb_Threshold_auto_2f', str(self.Ceb_Threshold_auto_f2.isChecked()))
+                config_ini.writeValue('setcamre', 'Ceb_Threshold_auto_3f', str(self.Ceb_Threshold_auto_f3.isChecked()))
+                config_ini.writeValue('setcamre', 'Ceb_Threshold_auto_4f', str(self.Ceb_Threshold_auto_f4.isChecked()))
+                config_ini.writeValue('setcamre', 'threshold_auto_1f', self.Lne_Threshold_ratio_f1.text())
+                config_ini.writeValue('setcamre', 'threshold_auto_2f', self.Lne_Threshold_ratio_f2.text())
+                config_ini.writeValue('setcamre', 'threshold_auto_3f', self.Lne_Threshold_ratio_f3.text())
+                config_ini.writeValue('setcamre', 'threshold_auto_4f', self.Lne_Threshold_ratio_f4.text())
+
             else:
                 QtWidgets.QMessageBox.question(self, "提示", "输入数值不正确",
                                                QtWidgets.QMessageBox.Yes)
         except Exception as e:
             print("调整曝光值拉条错误代码：", e)
 
-class SetSteelTypePage(QDialog,UI_SetSteelType.Ui_Dialog):
-    def __init__(self,parent = None):
-        super(SetSteelTypePage,self).__init__(parent)
+
+class SetSteelTypePage(QDialog, UI_SetSteelType.Ui_Dialog):
+    def __init__(self, parent=None):
+        super(SetSteelTypePage, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
         try:
-            self.Btn_addSteelType.clicked.connect(self.slot_addSteelType)   # 新增钢种
-            self.Btn_changeSteelDensity.clicked.connect(self.slot_changesteeldensity)   # 修改钢种密度
-            self.Btn_Exit.clicked.connect(self.close)      # 退出
+            self.Btn_addSteelType.clicked.connect(self.slot_addSteelType)  # 新增钢种
+            self.Btn_changeSteelDensity.clicked.connect(self.slot_changesteeldensity)  # 修改钢种密度
+            self.Btn_Exit.clicked.connect(self.close)  # 退出
             self.Btn_delSteelType.clicked.connect(self.slot_delsteeltype)  # 删除项
             self.LW_SteelType.setSelectionMode(QAbstractItemView.SingleSelection)  # 单项处理
             self.LW_SteelType.itemClicked.connect(self.slot_SetFurNoItemCliked)  # 单击触发 提示
@@ -1307,16 +1396,16 @@ class SetSteelTypePage(QDialog,UI_SetSteelType.Ui_Dialog):
         self.Lab_showSteelType.setText(str(configSteelType))
         self.LW_SteelType.clear()
         sql_sqlreadsteeltypevalue = SQLlite.SQL_readSteeltype()  # 读取数据库里的钢种信息
-        if sql_sqlreadsteeltypevalue == 0 :
+        if sql_sqlreadsteeltypevalue == 0:
             print("数据为空")
         else:
-            #显示出mysql中所有的钢种名称
-            for sqlreadsteeltypevalue in range(len(sql_sqlreadsteeltypevalue)) :
-                    self.LW_SteelType.addItem(sql_sqlreadsteeltypevalue[sqlreadsteeltypevalue][0])
+            # 显示出mysql中所有的钢种名称
+            for sqlreadsteeltypevalue in range(len(sql_sqlreadsteeltypevalue)):
+                self.LW_SteelType.addItem(sql_sqlreadsteeltypevalue[sqlreadsteeltypevalue][0])
 
     def slot_addSteelType(self):
         addsteeltype = AddSteelTypePage()
-        if addsteeltype.exec_() == 0 :
+        if addsteeltype.exec_() == 0:
             self.autoShow()
 
     def slot_checkSteelDensity(self):
@@ -1331,9 +1420,9 @@ class SetSteelTypePage(QDialog,UI_SetSteelType.Ui_Dialog):
             return
         idx = self.LW_SteelType.row(pItem)  # 得到项的序号  所在行 idx =>int
         print(idx)
-        SQLlite.SQL_delSteeltype(self.LW_SteelType.item(idx).text())    #删除mysql中的数据
+        SQLlite.SQL_delSteeltype(self.LW_SteelType.item(idx).text())  # 删除mysql中的数据
         print(self.LW_SteelType.item(idx).text())
-        self.LW_SteelType.takeItem(idx)  #移除选中的项
+        self.LW_SteelType.takeItem(idx)  # 移除选中的项
 
     def slot_changesteeldensity(self):
         # global temp_changesteelDensityname
@@ -1362,12 +1451,12 @@ class SetSteelTypePage(QDialog,UI_SetSteelType.Ui_Dialog):
         self.autoShow()
         window.autoShow()
 
-    def slot_SetFurNoItemCliked(self,item): # 选中项触发字体变化  item
+    def slot_SetFurNoItemCliked(self, item):  # 选中项触发字体变化  item
         ft = item.font()
         ft.setBold(True)
         item.setFont(ft)
 
-    def slot_setFurNoItemDoubleClicked(self,current,previous):  # current 新选中的项  previous之前选中的项
+    def slot_setFurNoItemDoubleClicked(self, current, previous):  # current 新选中的项  previous之前选中的项
         # 将之前选中的字体粗体恢复
         if not (previous is None):
             ft = previous.font()
@@ -1375,9 +1464,9 @@ class SetSteelTypePage(QDialog,UI_SetSteelType.Ui_Dialog):
             previous.setFont(ft)
 
 
-class AddSteelTypePage(QDialog,UI_AddSteelType.Ui_Dialog): #增加钢种类型页面
-    def __init__(self,parent = None):
-        super(AddSteelTypePage,self).__init__(parent)
+class AddSteelTypePage(QDialog, UI_AddSteelType.Ui_Dialog):  # 增加钢种类型页面
+    def __init__(self, parent=None):
+        super(AddSteelTypePage, self).__init__(parent)
         self.setupUi(self)
 
         try:
@@ -1389,7 +1478,8 @@ class AddSteelTypePage(QDialog,UI_AddSteelType.Ui_Dialog): #增加钢种类型�
 
     # 新增钢种名称及密度
     def slot_saveSteelType(self):
-        if len(self.Lne_steelName.text()) > 0 and len(self.Lne_steelDensity.text()) > 0 and float(self.Lne_steelDensity.text()) > 6 :
+        if len(self.Lne_steelName.text()) > 0 and len(self.Lne_steelDensity.text()) > 0 and float(
+                self.Lne_steelDensity.text()) > 6:
             try:
                 SQLlite.SQL_addSteelType('钢种名称', '钢种密度', value1=str(self.Lne_steelName.text()),
                                          value2=self.Lne_steelDensity.text())
@@ -1401,27 +1491,28 @@ class AddSteelTypePage(QDialog,UI_AddSteelType.Ui_Dialog): #增加钢种类型�
             except Exception as e:
                 QtWidgets.QMessageBox.question(self, "提示", e,
                                                QtWidgets.QMessageBox.Yes)
-        elif len(self.Lne_steelName.text()) > 0 and len(self.Lne_steelDensity.text()) > 0 and float(self.Lne_steelDensity.text()) <= 6 :
+        elif len(self.Lne_steelName.text()) > 0 and len(self.Lne_steelDensity.text()) > 0 and float(
+                self.Lne_steelDensity.text()) <= 6:
             QtWidgets.QMessageBox.question(self, "提示", "输入钢种密度过低",
                                            QtWidgets.QMessageBox.Yes)
         else:
             QtWidgets.QMessageBox.question(self, "提示", "请输入钢种名称及密度",
                                            QtWidgets.QMessageBox.Yes)
 
-class ChangeSteelTypeDensityPage(QDialog,UI_ChangeSteelTypeDensity.Ui_Dialog): #修改钢种密度页面
-    def __init__(self,parent = None):
-        super(ChangeSteelTypeDensityPage,self).__init__(parent)
+
+class ChangeSteelTypeDensityPage(QDialog, UI_ChangeSteelTypeDensity.Ui_Dialog):  # 修改钢种密度页面
+    def __init__(self, parent=None):
+        super(ChangeSteelTypeDensityPage, self).__init__(parent)
         self.setupUi(self)
         self.Lab_showSteelTypename.setText(public['temp_changesteelDensityname'])
         self.Lne_steelDensity.setValidator(QDoubleValidator())  # 设置输入浮点数字范围
         self.Btn_No.clicked.connect(self.close)
         self.Btn_Yes.clicked.connect(self.slot_changeSteelTypeDensity)
 
-
     def slot_changeSteelTypeDensity(self):
         # global temp_changesteelDensityname
         if len(self.Lne_steelDensity.text()) > 0 and float(self.Lne_steelDensity.text()) > 6:
-            SQLlite.SQL_updataSteeltype(str(public['temp_changesteelDensityname']),self.Lne_steelDensity.text())
+            SQLlite.SQL_updataSteeltype(str(public['temp_changesteelDensityname']), self.Lne_steelDensity.text())
             QtWidgets.QMessageBox.question(self, "提示", "钢种密度修改成功",
                                            QtWidgets.QMessageBox.Yes)
             self.close()
@@ -1433,9 +1524,10 @@ class ChangeSteelTypeDensityPage(QDialog,UI_ChangeSteelTypeDensity.Ui_Dialog): #
             QtWidgets.QMessageBox.question(self, "提示", "输入数据过小",
                                            QtWidgets.QMessageBox.Yes)
 
-class CheckSteelTypeDensityPage(QDialog,UI_CheckSteelTypeDensity.Ui_Dialog):
-    def __init__(self,parent = None):
-        super(CheckSteelTypeDensityPage,self).__init__(parent)
+
+class CheckSteelTypeDensityPage(QDialog, UI_CheckSteelTypeDensity.Ui_Dialog):
+    def __init__(self, parent=None):
+        super(CheckSteelTypeDensityPage, self).__init__(parent)
         self.setupUi(self)
         try:
             self.Btn_Exit.clicked.connect(self.close)
@@ -1464,8 +1556,8 @@ class CheckSteelTypeDensityPage(QDialog,UI_CheckSteelTypeDensity.Ui_Dialog):
                 # TODO 优化 2 设置水平方向表格为自适应的伸缩模式
                 self.TaW_CheckSteelDensity.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-                self.TaW_CheckSteelDensity.setColumnWidth(0,160)    # 将第一列的单元宽度设置为160
-                self.TaW_CheckSteelDensity.setColumnWidth(1,161)    # 将第二列的单元宽度设置为160
+                self.TaW_CheckSteelDensity.setColumnWidth(0, 160)  # 将第一列的单元宽度设置为160
+                self.TaW_CheckSteelDensity.setColumnWidth(1, 161)  # 将第二列的单元宽度设置为160
                 # 水平布局
                 layout = QHBoxLayout()
 
@@ -1475,7 +1567,6 @@ class CheckSteelTypeDensityPage(QDialog,UI_CheckSteelTypeDensity.Ui_Dialog):
                         # 为每个表格内添加数据
                         self.TaW_CheckSteelDensity.setItem(i, j, QTableWidgetItem(itemContent))
                 self.setLayout(layout)
-
 
                 # TODO 优化 4 设置表格整行选中
                 # TableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -1502,15 +1593,16 @@ class CheckSteelTypeDensityPage(QDialog,UI_CheckSteelTypeDensity.Ui_Dialog):
         except Exception as e:
             print("刷新钢种密码错误代码：", e)
 
-class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
 
-    def __init__(self,parent = None):
-        super(SetSteelDataPage,self).__init__(parent)
+class SetSteelDataPage(QDialog, UI_SetSteelData.Ui_Dialog):
+
+    def __init__(self, parent=None):
+        super(SetSteelDataPage, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
-        self.Btn_Exit.clicked.connect(self.close)   # 退出
-        self.Btn_addLength.clicked.connect(self.slot_addLength) # 添加所选定尺
-        self.Btn_delLength.clicked.connect(self.slot_delLength) # 删除所选定尺
+        self.Btn_Exit.clicked.connect(self.close)  # 退出
+        self.Btn_addLength.clicked.connect(self.slot_addLength)  # 添加所选定尺
+        self.Btn_delLength.clicked.connect(self.slot_delLength)  # 删除所选定尺
         self.Btn_chgLength.clicked.connect(self.slot_changelength)  # 修改所选定尺
         self.Btn_switchLength.clicked.connect(self.slot_switchlength)  # 切换所选定尺
         self.LW_lengthType.setSelectionMode(QAbstractItemView.SingleSelection)  # 单项处理
@@ -1525,23 +1617,21 @@ class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
             sql = 'SELECT * FROM `fixsteeldata`'
             cursor.execute(sql)
             # conn.commit()
-            fixsteeldatadata =cursor.fetchall()
+            fixsteeldatadata = cursor.fetchall()
 
             if fixsteeldatadata:
                 self.LW_lengthType.clear()
-                for row,form in enumerate(fixsteeldatadata):
+                for row, form in enumerate(fixsteeldatadata):
                     self.LW_lengthType.addItem(str(form[0]))
 
         except Exception as e:
-            QtWidgets.QMessageBox.question(self, "提示",e,
+            QtWidgets.QMessageBox.question(self, "提示", e,
                                            QtWidgets.QMessageBox.Yes)
-
 
     def slot_addLength(self):
         Fixleng = FixLengPage()
         if Fixleng.exec_() == 0:
             self.autoShow()
-
 
     def slot_delLength(self):
         try:
@@ -1553,16 +1643,16 @@ class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
             # print(idx)  #选择行数
             self.LW_lengthType.takeItem(idx)
 
-            sql = "DELETE FROM fixsteeldata WHERE SteelName = '" + pItem.text() +"';"
+            sql = "DELETE FROM fixsteeldata WHERE SteelName = '" + pItem.text() + "';"
             cursor.execute(sql)
             conn.commit()
             self.autoShow()
 
         except Exception as e:
-            QtWidgets.QMessageBox.question(self, "提示",e,
+            QtWidgets.QMessageBox.question(self, "提示", e,
                                            QtWidgets.QMessageBox.Yes)
 
-    def slot_changelength(self):    # 修改定尺
+    def slot_changelength(self):  # 修改定尺
         pItem = self.LW_lengthType.currentItem()
         if pItem is None:
             return
@@ -1572,7 +1662,7 @@ class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
         if changeSteelDate.exec_() == 0:
             self.autoShow()
 
-    def slot_switchlength(self):    # 切换定尺
+    def slot_switchlength(self):  # 切换定尺
         try:
             pItem = self.LW_lengthType.currentItem()  # 得到左侧列表选中项
             if pItem is None:
@@ -1599,13 +1689,15 @@ class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
                         config_ini.writeValue('init', 'btn_2asetweight', str(switchlengdata[switchleng][1]))
                         config_ini.writeValue('init', 'btn_3asetweight', str(switchlengdata[switchleng][1]))
                         config_ini.writeValue('init', 'btn_4asetweight', str(switchlengdata[switchleng][1]))
-                        config_ini.writeValue('init', 'Lab_1cSetPos', str(switchlengdata[switchleng][7]))    # 预夹
+                        config_ini.writeValue('init', 'Lab_1cSetPos', str(switchlengdata[switchleng][7]))  # 预夹
                         config_ini.writeValue('init', 'Lab_2cSetPos', str(switchlengdata[switchleng][7]))
                         config_ini.writeValue('init', 'Lab_3cSetPos', str(switchlengdata[switchleng][7]))
                         config_ini.writeValue('init', 'Lab_4cSetPos', str(switchlengdata[switchleng][7]))
 
                         # 合格重量范围， 指定重量  设置重量- 偏差   设定重量 + 偏差
-                        config_ini.writeValue('init', 'lab_1brange', str(float(switchlengdata[switchleng][2]) - float(switchlengdata[switchleng][5])) + "~" + str((float(switchlengdata[switchleng][6])) + float(switchlengdata[switchleng][2])))
+                        config_ini.writeValue('init', 'lab_1brange', str(
+                            float(switchlengdata[switchleng][2]) - float(switchlengdata[switchleng][5])) + "~" + str(
+                            (float(switchlengdata[switchleng][6])) + float(switchlengdata[switchleng][2])))
                         config_ini.writeValue('init', 'lab_2brange', str(
                             float(switchlengdata[switchleng][2]) - float(switchlengdata[switchleng][5])) + "~" + str(
                             (float(switchlengdata[switchleng][6])) + float(switchlengdata[switchleng][2])))
@@ -1624,7 +1716,7 @@ class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
             QtWidgets.QMessageBox.question(self, "提示", e,
                                            QtWidgets.QMessageBox.Yes)
 
-    def slot_takeItem(self):    # 删除定尺信息
+    def slot_takeItem(self):  # 删除定尺信息
         pItem = self.LW_lengthType.currentItem()
         if pItem is None:
             return
@@ -1642,6 +1734,7 @@ class SetSteelDataPage(QDialog,UI_SetSteelData.Ui_Dialog):
             ft = previous.font()
             ft.setBold(False)
             previous.setFont(ft)
+
 
 class ChangeFixLengPage(QDialog, UI_ChangeFixLeng.Ui_Dialog):
     def __init__(self, parent=None):
@@ -1687,11 +1780,19 @@ class ChangeFixLengPage(QDialog, UI_ChangeFixLeng.Ui_Dialog):
             changefixleng = cursor.fetchall()
             print(changefixleng)
             print(changefixleng[0][1])
-            if changefixleng :
+            if changefixleng:
                 SQLname = str(self.Lab_ReadLeng.text()) + ' 预夹=' + str(
                     self.Lne_PreClampOffset.text()) + ' 定重目标=' + str(self.Lne_FixWeiht.text())
 
-                sql = "UPDATE fixsteeldata SET SteelName = '" + str(SQLname) + "' , FixWeiht= " + str(self.Lne_FixWeiht.text()) + ", Density= "+ str(self.Lne_Density.text()) +", ErrRangeMinus= "+ str(self.Lne_ErrRangeMinus.text()) +", ErrRangePlus= "+ str(self.Lne_ErrRangePlus.text()) +", PreClampOffset = "+ str(self.Lne_PreClampOffset.text()) +", TheoryWeiht = "+ str(self.Lne_TheoryWeiht.text()) +", LengthRangeMax = "+ str(self.Lne_LengthRangeMax.text()) +" ,WeightMax = "+ str(self.Lne_WeightMax.text()) +" WHERE FixLength = '" + str(changefixleng[0][1]) + "'"
+                sql = "UPDATE fixsteeldata SET SteelName = '" + str(SQLname) + "' , FixWeiht= " + str(
+                    self.Lne_FixWeiht.text()) + ", Density= " + str(
+                    self.Lne_Density.text()) + ", ErrRangeMinus= " + str(
+                    self.Lne_ErrRangeMinus.text()) + ", ErrRangePlus= " + str(
+                    self.Lne_ErrRangePlus.text()) + ", PreClampOffset = " + str(
+                    self.Lne_PreClampOffset.text()) + ", TheoryWeiht = " + str(
+                    self.Lne_TheoryWeiht.text()) + ", LengthRangeMax = " + str(
+                    self.Lne_LengthRangeMax.text()) + " ,WeightMax = " + str(
+                    self.Lne_WeightMax.text()) + " WHERE FixLength = '" + str(changefixleng[0][1]) + "'"
                 print(sql)
                 cursor.execute(sql)
                 conn.commit()
@@ -1700,6 +1801,7 @@ class ChangeFixLengPage(QDialog, UI_ChangeFixLeng.Ui_Dialog):
             print("修改保存定重数据错误代码:", e)
         finally:
             self.close()
+
 
 class SetCalibratePage(QDialog, UI_SetCalibrate.Ui_Dialog):
     def __init__(self, parent=None):
@@ -1769,13 +1871,16 @@ class SetCalibratePage(QDialog, UI_SetCalibrate.Ui_Dialog):
         self.Lne_Frame_cut_F4_angle.setText(str(config_ini.readvalue('setcamre', 'frame_cut_f4_angle')))
 
     def slot_savesetcamrecutdata(self):
-        if int(self.Lne_Frame_cut_X0.text()) > int(self.Lab_Camre_X.text()) or int(self.Lne_Frame_cut_Y0.text()) > int(self.Lab_Camre_Y.text()) or int(self.Lne_Frame_cut_X1.text()) > int(self.Lab_Camre_X.text()) or int(self.Lne_Frame_cut_Y1.text()) > int(self.Lab_Camre_Y.text()) :
+        if int(self.Lne_Frame_cut_X0.text()) > int(self.Lab_Camre_X.text()) or int(self.Lne_Frame_cut_Y0.text()) > int(
+                self.Lab_Camre_Y.text()) or int(self.Lne_Frame_cut_X1.text()) > int(self.Lab_Camre_X.text()) or int(
+                self.Lne_Frame_cut_Y1.text()) > int(self.Lab_Camre_Y.text()):
             QtWidgets.QMessageBox.question(self, "提示", "输入范围超出",
                                            QtWidgets.QMessageBox.Yes)
         else:
             config_ini.writeValue('setcamre', 'frame_cut_x1', str(self.Lne_Frame_cut_X1.text()))
             config_ini.writeValue('setcamre', 'frame_cut_y1', str(self.Lne_Frame_cut_Y1.text()))
-            if int(self.Lne_Frame_cut_X1.text()) > int(self.Lne_Frame_cut_X0.text()) and int(self.Lne_Frame_cut_Y1.text()) > int(self.Lne_Frame_cut_Y0.text()):
+            if int(self.Lne_Frame_cut_X1.text()) > int(self.Lne_Frame_cut_X0.text()) and int(
+                    self.Lne_Frame_cut_Y1.text()) > int(self.Lne_Frame_cut_Y0.text()):
                 config_ini.writeValue('setcamre', 'frame_cut_x0', str(self.Lne_Frame_cut_X0.text()))
                 config_ini.writeValue('setcamre', 'frame_cut_y0', str(self.Lne_Frame_cut_Y0.text()))
             else:
@@ -1792,7 +1897,10 @@ class SetCalibratePage(QDialog, UI_SetCalibrate.Ui_Dialog):
 
     def slot_savesetflowdata(self):
 
-        if float(self.Lne_Frame_cut_Y0_F1.text()) < float(self.Lne_Frame_cut_Y1_F1.text()) and float(self.Lne_Frame_cut_Y0_F2.text()) < float(self.Lne_Frame_cut_Y1_F2.text()) and float(self.Lne_Frame_cut_Y0_F3.text()) < float(self.Lne_Frame_cut_Y1_F3.text()) and float(self.Lne_Frame_cut_Y0_F4.text()) < float(self.Lne_Frame_cut_Y1_F4.text()) :
+        if float(self.Lne_Frame_cut_Y0_F1.text()) < float(self.Lne_Frame_cut_Y1_F1.text()) and float(
+                self.Lne_Frame_cut_Y0_F2.text()) < float(self.Lne_Frame_cut_Y1_F2.text()) and float(
+                self.Lne_Frame_cut_Y0_F3.text()) < float(self.Lne_Frame_cut_Y1_F3.text()) and float(
+                self.Lne_Frame_cut_Y0_F4.text()) < float(self.Lne_Frame_cut_Y1_F4.text()):
             config_ini.writeValue('setcamre', 'frame_cut_x0_f1', str(self.Lne_Frame_cut_X0_F1.text()))
             config_ini.writeValue('setcamre', 'frame_cut_y0_f1', str(self.Lne_Frame_cut_Y0_F1.text()))
             config_ini.writeValue('setcamre', 'frame_cut_x1_f1', str(self.Lne_Frame_cut_X1_F1.text()))
@@ -1817,6 +1925,7 @@ class SetCalibratePage(QDialog, UI_SetCalibrate.Ui_Dialog):
         else:
             QtWidgets.QMessageBox.question(self, "提示", "输入范围错误",
                                            QtWidgets.QMessageBox.Yes)
+
 
 class S7_300():
     # 以下是读取PLC数据的函数
@@ -1847,6 +1956,7 @@ class MyWidget(QWidget):
         else:
             event.ignore()
 
+
 # 串口通讯线程
 def thread_SerialPort(name):
     s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -1859,7 +1969,7 @@ def thread_SerialPort(name):
     weiht_flag = True
     while weiht_flag:
         weigth = SerialPortHelper.Helper(conn)
-        if weigth :
+        if weigth:
             if len(weigth) == 1:
                 if '41' in weigth.keys():
                     # print("41重量是:",weigth['41'])
@@ -1878,9 +1988,10 @@ def thread_SerialPort(name):
                 else:
                     print('程序异常')
 
+
 # 切割PLC通讯线程
 def thread_PLC_CUT_stat(name):
-    PLC_stat_flag =True
+    PLC_stat_flag = True
     while PLC_stat_flag:
         if plc_cut.ConnectServer().IsSuccess == True:
             public['plc_cut_IsSuccess'] = True
@@ -1909,9 +2020,10 @@ def thread_PLC_CUT_stat(name):
             public['plc_cut_IsSuccess'] = False
             print("切割PLC连接失败")
 
+
 # 连铸公用PLC通讯线程
 def thread_PLC_public_stat(name):
-    PLC_stat_flag =True
+    PLC_stat_flag = True
     while PLC_stat_flag:
         if plc_public.ConnectServer().IsSuccess == True:
             public['plc_public_IsSuccess'] = True
@@ -1920,9 +2032,10 @@ def thread_PLC_public_stat(name):
             public['plc_public_IsSuccess'] = False
             print("连铸公共PLC连接失败")
 
+
 # 连铸1流PLC通讯线程
 def thread_PLC_1f_stat(name):
-    PLC_stat_flag =True
+    PLC_stat_flag = True
     while PLC_stat_flag:
         if plc_1f.ConnectServer().IsSuccess == True:
             public['plc_1f_IsSuccess'] = True
@@ -1934,9 +2047,10 @@ def thread_PLC_1f_stat(name):
             public['plc_1f_IsSuccess'] = False
             print("连铸1流PLC连接失败")
 
+
 # 连铸2流PLC通讯线程
 def thread_PLC_2f_stat(name):
-    PLC_stat_flag =True
+    PLC_stat_flag = True
     while PLC_stat_flag:
         if plc_2f.ConnectServer().IsSuccess == True:
             public['plc_2f_IsSuccess'] = True
@@ -1948,9 +2062,10 @@ def thread_PLC_2f_stat(name):
             public['plc_2f_IsSuccess'] = False
             print("连铸2流PLC连接失败")
 
+
 # 连铸3流PLC通讯线程
 def thread_PLC_3f_stat(name):
-    PLC_stat_flag =True
+    PLC_stat_flag = True
     while PLC_stat_flag:
         if plc_3f.ConnectServer().IsSuccess == True:
             public['plc_3f_IsSuccess'] = True
@@ -1961,9 +2076,10 @@ def thread_PLC_3f_stat(name):
             public['plc_3f_IsSuccess'] = False
             print("连铸3流PLC连接失败")
 
+
 # 连铸4流PLC通讯线程
 def thread_PLC_4f_stat(name):
-    PLC_stat_flag =True
+    PLC_stat_flag = True
     while PLC_stat_flag:
         if plc_4f.ConnectServer().IsSuccess == True:
             public['plc_4f_IsSuccess'] = True
@@ -1973,6 +2089,7 @@ def thread_PLC_4f_stat(name):
         else:
             public['plc_4f_IsSuccess'] = False
             print("连铸4流PLC连接失败")
+
 
 if __name__ == "__main__":
 
@@ -1985,7 +2102,8 @@ if __name__ == "__main__":
         config_ini = Config.Config(path="..\FixedLengthSystem", pathconfig='config.ini')
         config_fur = Config.Config(path="..\FixedLengthSystem", pathconfig='FurNum.ini')
         # 连接本地数据库
-        pool = PooledDB(pymysql, 1, host='localhost', user='root', passwd='123', db='steelfixlength', port=3306)  # 5为连接池里的最少连接数
+        pool = PooledDB(pymysql, 1, host='localhost', user='root', passwd='123', db='steelfixlength',
+                        port=3306)  # 5为连接池里的最少连接数
         conn = pool.connection()  # 以后每次需要数据库连接就是用connection（）函数获取连接就好了
         cursor = conn.cursor()
 

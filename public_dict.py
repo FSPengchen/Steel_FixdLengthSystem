@@ -52,6 +52,7 @@ public_dict = {
     'plc_2f_pullspeed': 0,  # 连铸2流PLC拉速
     'plc_3f_pullspeed': 0,  # 连铸3流PLC拉速
     'plc_4f_pullspeed': 0,  # 连铸4流PLC拉速
+
 }
 
 list_SteelData = []
