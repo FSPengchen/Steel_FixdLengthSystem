@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>873</width>
-    <height>496</height>
+    <width>877</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,7 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>430</y>
+     <y>530</y>
      <width>619</width>
      <height>35</height>
     </rect>
@@ -157,7 +157,7 @@ font: 75 12pt &quot;微软雅黑&quot;;
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>90</y>
+     <y>140</y>
      <width>505</width>
      <height>71</height>
     </rect>
@@ -174,7 +174,7 @@ font: 75 12pt &quot;微软雅黑&quot;;
 </string>
         </property>
         <property name="text">
-         <string>1流阈值:</string>
+         <string>1流亮阈值:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -220,7 +220,7 @@ font: 75 12pt &quot;微软雅黑&quot;;
 </string>
       </property>
       <property name="text">
-       <string>2流阈值:</string>
+       <string>2流亮阈值:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -236,7 +236,7 @@ font: 75 12pt &quot;微软雅黑&quot;;
 </string>
       </property>
       <property name="text">
-       <string>3流阈值:</string>
+       <string>3流亮阈值:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -252,7 +252,7 @@ font: 75 12pt &quot;微软雅黑&quot;;
 </string>
       </property>
       <property name="text">
-       <string>4流阈值:</string>
+       <string>4流亮阈值:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -388,7 +388,7 @@ font: 75 12pt &quot;微软雅黑&quot;;
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>240</y>
+     <y>380</y>
      <width>505</width>
      <height>71</height>
     </rect>
@@ -592,7 +592,7 @@ font: 75 12pt &quot;微软雅黑&quot;;
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>380</y>
+     <y>450</y>
      <width>490</width>
      <height>33</height>
     </rect>
@@ -623,7 +623,7 @@ font: 75 8pt &quot;微软雅黑&quot;;
    <property name="geometry">
     <rect>
      <x>140</x>
-     <y>210</y>
+     <y>350</y>
      <width>91</width>
      <height>19</height>
     </rect>
@@ -636,7 +636,7 @@ font: 75 8pt &quot;微软雅黑&quot;;
    <property name="geometry">
     <rect>
      <x>270</x>
-     <y>210</y>
+     <y>350</y>
      <width>91</width>
      <height>19</height>
     </rect>
@@ -649,7 +649,7 @@ font: 75 8pt &quot;微软雅黑&quot;;
    <property name="geometry">
     <rect>
      <x>400</x>
-     <y>210</y>
+     <y>350</y>
      <width>91</width>
      <height>19</height>
     </rect>
@@ -662,7 +662,7 @@ font: 75 8pt &quot;微软雅黑&quot;;
    <property name="geometry">
     <rect>
      <x>520</x>
-     <y>210</y>
+     <y>350</y>
      <width>91</width>
      <height>19</height>
     </rect>
@@ -671,6 +671,125 @@ font: 75 8pt &quot;微软雅黑&quot;;
     <string>自动调整</string>
    </property>
   </widget>
+  <widget class="QCheckBox" name="Ceb_Correct_auto_f1">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>230</y>
+     <width>91</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动调重</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="Ceb_Correct_auto_f3">
+   <property name="geometry">
+    <rect>
+     <x>400</x>
+     <y>230</y>
+     <width>91</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动调重</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="Ceb_Correct_auto_f2">
+   <property name="geometry">
+    <rect>
+     <x>270</x>
+     <y>230</y>
+     <width>91</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动调重</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="Ceb_Correct_auto_f4">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>230</y>
+     <width>91</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>自动调重</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="Lab_Camre_X">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>310</y>
+     <width>551</width>
+     <height>181</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:cornflowerblue;
+font: 75 12pt &quot;微软雅黑&quot;;
+color:yellow
+</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_47">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>320</y>
+     <width>151</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+font: 75 12pt &quot;微软雅黑&quot;;
+
+</string>
+   </property>
+   <property name="text">
+    <string>自动调整阈值比:</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <zorder>Lab_Camre_X</zorder>
+  <zorder>horizontalSlider_Light</zorder>
+  <zorder>label_2</zorder>
+  <zorder>pushButton_2</zorder>
+  <zorder>Btn_Exit</zorder>
+  <zorder>Btn_SaveData</zorder>
+  <zorder>Lab_LightValue</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>Btn_CameraSetAeState_auto</zorder>
+  <zorder>Btn_CameraSetAeState_man</zorder>
+  <zorder>Lab_CameraSetAeState</zorder>
+  <zorder>layoutWidget_2</zorder>
+  <zorder>label_46</zorder>
+  <zorder>Ceb_Threshold_auto_f1</zorder>
+  <zorder>Ceb_Threshold_auto_f2</zorder>
+  <zorder>Ceb_Threshold_auto_f3</zorder>
+  <zorder>Ceb_Threshold_auto_f4</zorder>
+  <zorder>Ceb_Correct_auto_f1</zorder>
+  <zorder>Ceb_Correct_auto_f3</zorder>
+  <zorder>Ceb_Correct_auto_f2</zorder>
+  <zorder>Ceb_Correct_auto_f4</zorder>
+  <zorder>label_47</zorder>
  </widget>
  <resources/>
  <connections/>

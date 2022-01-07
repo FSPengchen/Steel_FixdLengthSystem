@@ -1,26 +1,13 @@
 import socket
 import binascii
 
-
 def Helper(conn):
-    null_str = None
+    # data = s1.recv(1024)
+    data = conn.recv(1024)
+    # print('data:', data, type(data), len(data))
     weightdict = {}
-    datahead = [b'\x01\x41\x02', b'\x01\x42\x02', b'\x01\x43\x02', b'\x01\x44\x02']
-
-    while len(null_str) < 50:
-        data = conn.recv(1024)
-
-        print('data:', data, type(data), len(data))
-        print(binascii.b2a_hex(data))
-        null_str += data
-
-    if len(data) > 50:
-        for i in datahead:
-            data = data[null_str.find(datahead[i]):]
-        if len(data) <13:
-            weightdict = {'404': '数据异常'}
-            return weightdict
-
+    # print(data)
+    if len(data) == 13:
         SOH = (data[:1]).hex()
         # print('SOH:',SOH,type(SOH))
         # print('data[:1]报文引导信息头01H:', data[:1], str(binascii.b2a_hex(data[:1])))
@@ -62,29 +49,18 @@ def Helper(conn):
         strdw = str_return_data.find('014102')
         # print('所在字符的位置', strdw)
 
-        if SOH == '01' and ADDR == 41 and STX == 2 and m == 0 and ETX == '03' and LF == '0a':
-            weightdict = {'41': BLOCK}
-        elif SOH == '01' and ADDR == 42 and STX == 2 and m == 0 and ETX == '03' and LF == '0a':
+        if SOH == '01' and ADDR == 41 and STX == 2 and m == 0 and ETX =='03' and LF == '0a':
+            weightdict = {'41' : BLOCK}
+        elif SOH == '01' and ADDR == 42 and STX == 2 and m == 0 and ETX =='03' and LF == '0a':
             weightdict = {'42': BLOCK}
-        elif SOH == '01' and ADDR == 43 and STX == 2 and m == 0 and ETX == '03' and LF == '0a':
+        elif SOH == '01' and ADDR == 43 and STX == 2 and m == 0 and ETX =='03' and LF == '0a':
             weightdict = {'43': BLOCK}
-        elif SOH == '01' and ADDR == 44 and STX == 2 and m == 0 and ETX == '03' and LF == '0a':
+        elif SOH == '01' and ADDR == 44 and STX == 2 and m == 0 and ETX =='03' and LF == '0a':
             weightdict = {'44': BLOCK}
         return weightdict
 
 
 if __name__ == "__main__":
-    a = b'\x16!k\x00?_\x1fZvvvRf\x16!k'
-    b = b'\x00?_\x1f\x1avvvRv\x16!k\x00?_'
-    c = b'\x1fZvvvRf\x16!k\x00?_\x1fZv'
-    d = b'vvRv\x16!k\x00?_\x1fZvvvR'
-
-    abcd = a + b + c + d
-    print('abcd原码', abcd)
-    print('十六进制转码', binascii.b2a_hex(abcd))
-
-
-'''
     s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s1.bind(('', 8899))
     s1.listen(5)
@@ -94,10 +70,8 @@ if __name__ == "__main__":
     print(addr)
     while True:
         aa = Helper(conn)
-        # print(aa)
+        print(aa)
     s1.close()
-
-'''
 
 # str_data = str(data)
 # print (str_data,type(str_data))
