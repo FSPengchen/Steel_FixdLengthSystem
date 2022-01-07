@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(776, 557)
+        Dialog.resize(770, 787)
         self.Lne_Frame_cut_X0 = QtWidgets.QLineEdit(Dialog)
         self.Lne_Frame_cut_X0.setGeometry(QtCore.QRect(200, 110, 61, 31))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
@@ -525,7 +525,7 @@ class Ui_Dialog(object):
 "")
         self.Lne_Frame_cut_Y1_F4.setObjectName("Lne_Frame_cut_Y1_F4")
         self.label_36 = QtWidgets.QLabel(Dialog)
-        self.label_36.setGeometry(QtCore.QRect(570, 310, 41, 21))
+        self.label_36.setGeometry(QtCore.QRect(550, 310, 91, 21))
         self.label_36.setStyleSheet("\n"
 "font: 75 12pt \"微软雅黑\";\n"
 "\n"
@@ -593,6 +593,255 @@ class Ui_Dialog(object):
         self.Ceb_AllowEdit.setCheckable(True)
         self.Ceb_AllowEdit.setChecked(False)
         self.Ceb_AllowEdit.setObjectName("Ceb_AllowEdit")
+        self.Lne_Frame_cut_X1_F1_12 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F1_12.setEnabled(False)
+        self.Lne_Frame_cut_X1_F1_12.setGeometry(QtCore.QRect(360, 580, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F1_12.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F1_12.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F1_12.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F1_12.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F1_12.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F1_12.setObjectName("Lne_Frame_cut_X1_F1_12")
+        self.label_40 = QtWidgets.QLabel(Dialog)
+        self.label_40.setGeometry(QtCore.QRect(20, 680, 141, 21))
+        self.label_40.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.label_40.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_40.setObjectName("label_40")
+        self.Lne_Frame_cut_X1_F4_12 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F4_12.setEnabled(False)
+        self.Lne_Frame_cut_X1_F4_12.setGeometry(QtCore.QRect(360, 730, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F4_12.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F4_12.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F4_12.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F4_12.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F4_12.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F4_12.setObjectName("Lne_Frame_cut_X1_F4_12")
+        self.Lne_Frame_cut_X1_F3_12 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F3_12.setEnabled(False)
+        self.Lne_Frame_cut_X1_F3_12.setGeometry(QtCore.QRect(360, 680, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F3_12.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F3_12.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F3_12.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F3_12.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F3_12.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F3_12.setObjectName("Lne_Frame_cut_X1_F3_12")
+        self.Ceb_AllowEdit_2 = QtWidgets.QCheckBox(Dialog)
+        self.Ceb_AllowEdit_2.setGeometry(QtCore.QRect(60, 550, 91, 19))
+        self.Ceb_AllowEdit_2.setCheckable(True)
+        self.Ceb_AllowEdit_2.setChecked(False)
+        self.Ceb_AllowEdit_2.setObjectName("Ceb_AllowEdit_2")
+        self.line_4 = QtWidgets.QFrame(Dialog)
+        self.line_4.setGeometry(QtCore.QRect(10, 530, 661, 16))
+        self.line_4.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.label_42 = QtWidgets.QLabel(Dialog)
+        self.label_42.setGeometry(QtCore.QRect(20, 730, 141, 21))
+        self.label_42.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.label_42.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_42.setObjectName("label_42")
+        self.Lne_Frame_cut_X1_F2_12 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F2_12.setEnabled(False)
+        self.Lne_Frame_cut_X1_F2_12.setGeometry(QtCore.QRect(360, 630, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F2_12.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F2_12.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F2_12.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F2_12.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F2_12.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F2_12.setObjectName("Lne_Frame_cut_X1_F2_12")
+        self.label_44 = QtWidgets.QLabel(Dialog)
+        self.label_44.setGeometry(QtCore.QRect(20, 580, 141, 21))
+        self.label_44.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.label_44.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_44.setObjectName("label_44")
+        self.label_45 = QtWidgets.QLabel(Dialog)
+        self.label_45.setGeometry(QtCore.QRect(20, 630, 141, 21))
+        self.label_45.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.label_45.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_45.setObjectName("label_45")
+        self.Btn_SaveProofreadingData = QtWidgets.QPushButton(Dialog)
+        self.Btn_SaveProofreadingData.setGeometry(QtCore.QRect(630, 650, 93, 28))
+        self.Btn_SaveProofreadingData.setObjectName("Btn_SaveProofreadingData")
+        self.Lne_Frame_cut_X1_F2_13 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F2_13.setEnabled(False)
+        self.Lne_Frame_cut_X1_F2_13.setGeometry(QtCore.QRect(220, 630, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F2_13.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F2_13.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F2_13.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F2_13.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F2_13.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F2_13.setObjectName("Lne_Frame_cut_X1_F2_13")
+        self.Lne_Frame_cut_X1_F1_13 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F1_13.setEnabled(False)
+        self.Lne_Frame_cut_X1_F1_13.setGeometry(QtCore.QRect(220, 580, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F1_13.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F1_13.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F1_13.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F1_13.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F1_13.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F1_13.setObjectName("Lne_Frame_cut_X1_F1_13")
+        self.label_39 = QtWidgets.QLabel(Dialog)
+        self.label_39.setGeometry(QtCore.QRect(210, 550, 81, 21))
+        self.label_39.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.label_39.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_39.setObjectName("label_39")
+        self.Lne_Frame_cut_X1_F3_13 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F3_13.setEnabled(False)
+        self.Lne_Frame_cut_X1_F3_13.setGeometry(QtCore.QRect(220, 680, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F3_13.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F3_13.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F3_13.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F3_13.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F3_13.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F3_13.setObjectName("Lne_Frame_cut_X1_F3_13")
+        self.Lne_Frame_cut_X1_F4_13 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F4_13.setEnabled(False)
+        self.Lne_Frame_cut_X1_F4_13.setGeometry(QtCore.QRect(220, 730, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F4_13.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F4_13.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F4_13.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F4_13.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F4_13.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F4_13.setObjectName("Lne_Frame_cut_X1_F4_13")
+        self.Lne_Frame_cut_X1_F2_11 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F2_11.setEnabled(False)
+        self.Lne_Frame_cut_X1_F2_11.setGeometry(QtCore.QRect(510, 630, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F2_11.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F2_11.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F2_11.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F2_11.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F2_11.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F2_11.setObjectName("Lne_Frame_cut_X1_F2_11")
+        self.Lne_Frame_cut_X1_F1_11 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F1_11.setEnabled(False)
+        self.Lne_Frame_cut_X1_F1_11.setGeometry(QtCore.QRect(510, 580, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F1_11.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F1_11.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F1_11.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F1_11.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F1_11.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F1_11.setObjectName("Lne_Frame_cut_X1_F1_11")
+        self.Lne_Frame_cut_X1_F4_11 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F4_11.setEnabled(False)
+        self.Lne_Frame_cut_X1_F4_11.setGeometry(QtCore.QRect(510, 730, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F4_11.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F4_11.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F4_11.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F4_11.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F4_11.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F4_11.setObjectName("Lne_Frame_cut_X1_F4_11")
+        self.Lne_Frame_cut_X1_F3_11 = QtWidgets.QLineEdit(Dialog)
+        self.Lne_Frame_cut_X1_F3_11.setEnabled(False)
+        self.Lne_Frame_cut_X1_F3_11.setGeometry(QtCore.QRect(510, 680, 61, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.Lne_Frame_cut_X1_F3_11.sizePolicy().hasHeightForWidth())
+        self.Lne_Frame_cut_X1_F3_11.setSizePolicy(sizePolicy)
+        self.Lne_Frame_cut_X1_F3_11.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.Lne_Frame_cut_X1_F3_11.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.Lne_Frame_cut_X1_F3_11.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.Lne_Frame_cut_X1_F3_11.setObjectName("Lne_Frame_cut_X1_F3_11")
+        self.label_41 = QtWidgets.QLabel(Dialog)
+        self.label_41.setGeometry(QtCore.QRect(350, 550, 81, 21))
+        self.label_41.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.label_41.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_41.setObjectName("label_41")
+        self.label_43 = QtWidgets.QLabel(Dialog)
+        self.label_43.setGeometry(QtCore.QRect(500, 550, 81, 21))
+        self.label_43.setStyleSheet("\n"
+"font: 75 12pt \"微软雅黑\";\n"
+"\n"
+"")
+        self.label_43.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_43.setObjectName("label_43")
 
         self.retranslateUi(Dialog)
         self.Ceb_AllowEdit.toggled['bool'].connect(self.Lne_Frame_cut_X0_F1.setEnabled)
@@ -603,6 +852,18 @@ class Ui_Dialog(object):
         self.Ceb_AllowEdit.toggled['bool'].connect(self.Lne_Frame_cut_X1_F2.setEnabled)
         self.Ceb_AllowEdit.toggled['bool'].connect(self.Lne_Frame_cut_X1_F3.setEnabled)
         self.Ceb_AllowEdit.toggled['bool'].connect(self.Lne_Frame_cut_X1_F4.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F1_13.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F2_13.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F3_13.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F4_13.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F1_12.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F2_12.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F3_12.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F4_12.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F1_11.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F2_11.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F3_11.setEnabled)
+        self.Ceb_AllowEdit_2.toggled['bool'].connect(self.Lne_Frame_cut_X1_F4_11.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -655,10 +916,31 @@ class Ui_Dialog(object):
         self.Lne_Frame_cut_Y0_F4.setText(_translate("Dialog", "0"))
         self.Lne_Frame_cut_X0_F4.setText(_translate("Dialog", "0"))
         self.Lne_Frame_cut_Y1_F4.setText(_translate("Dialog", "0"))
-        self.label_36.setText(_translate("Dialog", "角度"))
+        self.label_36.setText(_translate("Dialog", "间隔距离"))
         self.Lne_Frame_cut_F1_angle.setText(_translate("Dialog", "0"))
         self.Lne_Frame_cut_F2_angle.setText(_translate("Dialog", "0"))
         self.Lne_Frame_cut_F3_angle.setText(_translate("Dialog", "0"))
         self.Lne_Frame_cut_F4_angle.setText(_translate("Dialog", "0"))
         self.Ceb_AllowEdit.setText(_translate("Dialog", "允许编辑"))
+        self.Lne_Frame_cut_X1_F1_12.setText(_translate("Dialog", "0"))
+        self.label_40.setText(_translate("Dialog", "3流校对点:"))
+        self.Lne_Frame_cut_X1_F4_12.setText(_translate("Dialog", "0"))
+        self.Lne_Frame_cut_X1_F3_12.setText(_translate("Dialog", "0"))
+        self.Ceb_AllowEdit_2.setText(_translate("Dialog", "允许编辑"))
+        self.label_42.setText(_translate("Dialog", "4流校对点:"))
+        self.Lne_Frame_cut_X1_F2_12.setText(_translate("Dialog", "0"))
+        self.label_44.setText(_translate("Dialog", "1流校对点:"))
+        self.label_45.setText(_translate("Dialog", "2流校对点:"))
+        self.Btn_SaveProofreadingData.setText(_translate("Dialog", "保存"))
+        self.Lne_Frame_cut_X1_F2_13.setText(_translate("Dialog", "0"))
+        self.Lne_Frame_cut_X1_F1_13.setText(_translate("Dialog", "0"))
+        self.label_39.setText(_translate("Dialog", "13米X轴"))
+        self.Lne_Frame_cut_X1_F3_13.setText(_translate("Dialog", "0"))
+        self.Lne_Frame_cut_X1_F4_13.setText(_translate("Dialog", "0"))
+        self.Lne_Frame_cut_X1_F2_11.setText(_translate("Dialog", "0"))
+        self.Lne_Frame_cut_X1_F1_11.setText(_translate("Dialog", "0"))
+        self.Lne_Frame_cut_X1_F4_11.setText(_translate("Dialog", "0"))
+        self.Lne_Frame_cut_X1_F3_11.setText(_translate("Dialog", "0"))
+        self.label_41.setText(_translate("Dialog", "12米X轴"))
+        self.label_43.setText(_translate("Dialog", "11米X轴"))
 
