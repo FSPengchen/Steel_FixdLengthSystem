@@ -1,10 +1,16 @@
 import socket
 import binascii
+import time
 
 def Helper(conn):
     # data = s1.recv(1024)
     data = conn.recv(1024)
+    # print(data)
     # print('data:', data, type(data), len(data))
+    with open('2233.txt', 'a+') as f:
+        f.writelines(
+            time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()) + ':' + '1传感器线程重量' + str(binascii.b2a_hex(data[3:8])) + '\n')
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), data[3:8])
     weightdict = {}
     # print(data)
     if len(data) == 13:
@@ -50,19 +56,20 @@ def Helper(conn):
         # print('所在字符的位置', strdw)
 
         if SOH == '01' and ADDR == 41 and STX == 2 and m == 0 and ETX =='03' and LF == '0a':
-            weightdict = {'41' : BLOCK}
+            weightdict = {'41': BLOCK}
         elif SOH == '01' and ADDR == 42 and STX == 2 and m == 0 and ETX =='03' and LF == '0a':
             weightdict = {'42': BLOCK}
         elif SOH == '01' and ADDR == 43 and STX == 2 and m == 0 and ETX =='03' and LF == '0a':
             weightdict = {'43': BLOCK}
         elif SOH == '01' and ADDR == 44 and STX == 2 and m == 0 and ETX =='03' and LF == '0a':
             weightdict = {'44': BLOCK}
+        # time.sleep(60)
         return weightdict
 
 
 if __name__ == "__main__":
     s1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s1.bind(('', 8899))
+    s1.bind(('', 20003))
     s1.listen(5)
     print("开始监听")
     conn, addr = s1.accept()
@@ -70,7 +77,7 @@ if __name__ == "__main__":
     print(addr)
     while True:
         aa = Helper(conn)
-        print(aa)
+        # print(aa)
     s1.close()
 
 # str_data = str(data)

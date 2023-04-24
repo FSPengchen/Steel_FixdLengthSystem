@@ -219,13 +219,13 @@
     <string>取消</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>60</x>
      <y>40</y>
-     <width>521</width>
-     <height>63</height>
+     <width>559</width>
+     <height>73</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">

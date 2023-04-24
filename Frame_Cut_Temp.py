@@ -1,7 +1,16 @@
+import _thread
 import math
 import cv2
 import numpy as np
 from scipy import stats
+import logging
+import time
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s > %(message)s',
+                    datefmt='%Y/%m/%d %H:%M:%S',
+                    filename='err.log',  # 日志存储文件
+                    filemode='a'
+                    )
 
 def quantile_exc(data, n):  # 四分位数，其中data为数据组，n为第几个四分位数
     if n < 1 or n > 3:
@@ -14,12 +23,15 @@ def quantile_exc(data, n):  # 四分位数，其中data为数据组，n为第几
     return quartile
 
 def frameCut(frame_cut, cut_x0, cut_x1, cut_y0, cut_y1, fixlength, temp_Lne_Frame_cut_Y1, temp_Lne_Frame_cut_Y0,
-             frame_cut_angle, setcutlimt, threshold, Start_Cut_state, threshold_ratio_switch, threshold_ratio=0.4, pullspeed=2.5, x_9=750, x_11=450, x_13=100):
+             frame_cut_angle, setcutlimt, threshold, Start_Cut_state, threshold_ratio_switch, threshold_ratio=0.4, pullspeed=2.5, x_9=750, x_11=450, x_13=100, setcutlimt_selected_status=False):
     thickness = 2
     lineType = 4
     colors_Line = (255, 0, 0)
     # 创建字典，第一周期判断为空，只触发一周期的赋值切割
     return_dict = {'Start_Cut_state': Start_Cut_state, 'adjustment': 0}
+
+    def send_cut_timer(name):
+        return_dict['Start_Cut_state_F'] = False
 
     try:
         # 标尺直线框
@@ -34,7 +46,13 @@ def frameCut(frame_cut, cut_x0, cut_x1, cut_y0, cut_y1, fixlength, temp_Lne_Fram
         return_dict['num'] = scale_line_return['num']
 
         # 设置切割线
-        set_line(frame_cut, x1=int(cut_x0), y1=int(cut_y0), x2=int(cut_x1), y2=int(cut_y1), cut_x=int(setcutlimt), n1=int(frame_cut_angle),line_color=(0, 255, 0))
+        # 切割线变化的颜色
+        if setcutlimt_selected_status == True:
+            setcutlimt_line_color = (255, 255, 0)
+        else:
+            setcutlimt_line_color = (0, 255, 0)
+
+        set_line(frame_cut, x1=int(cut_x0), y1=int(cut_y0), x2=int(cut_x1), y2=int(cut_y1), cut_x=int(setcutlimt), n1=int(frame_cut_angle), line_color=setcutlimt_line_color)
         # 切割区域
 
         # 判断 Y轴值的大小,修改切割图像方式
@@ -121,24 +139,33 @@ def frameCut(frame_cut, cut_x0, cut_x1, cut_y0, cut_y1, fixlength, temp_Lne_Fram
             set_line(frame_cut, x1=int(cut_x0), y1=int(cut_y0), x2=int(cut_x1), y2=int(cut_y1), cut_x=int(quantile_minX_list2),
                        n1=int(frame_cut_angle))
 
+
             # print('X轴图形众值', stats.mode(contoursX_list)[0][0])
             # print('切割设定值', setcutlimt)
             # cv2.imshow(str(cut_y0), frame_cut_f_temp) # 这个开启
-            if int(quantile_minX_list2) <= int(setcutlimt):
+            # print('跟踪最小值',cut_y0,quantile_minX_list2)
+            # print('切割设定值',cut_y0,setcutlimt)
+            # 限制切割线及切割线-10位置范围内触发切割
+
+            if int(quantile_minX_list2) <= int(setcutlimt) and int(quantile_minX_list2) >= int(int(setcutlimt) - 20):
                 if return_dict['Start_Cut_state'] == False:
                     # 触发一个周期的赋值
                     return_dict['Start_Cut_state'] = True
                     # print(cut_y0, "钢坯切割")
                     return_dict['Start_Cut_state_F'] = True
+                    logging.info('第{}流坐标,钢坯切割时间{},跟踪值{}'.format(cut_y0, int(time.time()), quantile_minX_list2))
 
                 else:
                     return_dict['Lab_fcState'] = '钢坯切割'
                     return_dict['Start_Cut_state_F'] = False
                     # print(cut_y0, "已触发切割")
+                    logging.info('第{}流坐标,已触发切割时间{},跟踪值{}'.format(cut_y0, int(time.time()), quantile_minX_list2))
                 return return_dict
+
             else:
                 return_dict['Lab_fcState'] = '钢坯跟踪'
                 return_dict['Start_Cut_state_F'] = False
+                logging.info('第{}流坐标,钢坯跟踪时间{},跟踪值{}'.format(cut_y0, int(time.time()), quantile_minX_list2))
                 return return_dict
     except Exception as e:
         print(e)
@@ -218,8 +245,6 @@ def scale_line(img, fixlength, x1=0, y1=400, x2=900, y2=420, x_9=750, x_11=450, 
             setfixlength_x = ((x_11 - x_13) * (13000 - fixlength) + 1000 * x_13) / 1000
             # print(str(y1),'setfixlength_x ',setfixlength_x)
             setfixlength_y = k1 * setfixlength_x + B
-
-
 
             cv2.circle(img, (int(setfixlength_x), int(setfixlength_y)), 3, (0, 255, 255), 3)
         else:
@@ -342,20 +367,7 @@ def scale_line(img, fixlength, x1=0, y1=400, x2=900, y2=420, x_9=750, x_11=450, 
         return_dict['setfixlength_x'] = setfixlength_x
         return_dict['setfixlength_geshu_x'] = setfixlength_geshu_x
         return_dict['num'] = num
-
         return return_dict
-
-
-
-
-
-
-
-
-
-
-
-
 
     # 设置输入X轴画出两线间的线段
 def set_line(img, x1=0, y1=400, x2=900, y2=420, cut_x = 200, n1=60,line_color=(255, 0, 0)):
@@ -377,6 +389,7 @@ def set_line(img, x1=0, y1=400, x2=900, y2=420, cut_x = 200, n1=60,line_color=(2
             keduxian_x11_9_1 = math.sqrt(D2 * D2 / (1 + cuizhi_k*cuizhi_k)) + cut_x
             keduxian_y11_9_1 = (-1 / k1) * keduxian_x11_9_1 + cuizhi_B
             cv2.line(img, (int(cut_x), int(cut_y)), (int(keduxian_x11_9_1), int(keduxian_y11_9_1)),line_color, 2, 8)
+
 
         elif y1 > y2:
             # 展示直线
@@ -400,6 +413,7 @@ def set_line(img, x1=0, y1=400, x2=900, y2=420, cut_x = 200, n1=60,line_color=(2
             # keduxian_y11_9_1 = (-1*cut_x / k1) + cut_y + (cut_x / k1)
 
             cv2.line(img, (int(cut_x), int(cut_y)), (int(keduxian_x11_9_1), int(keduxian_y11_9_1)), line_color, 2, 8)
+
     else:
         cut_y = y1 - n1
         cv2.line(img, (int(cut_x), int(y1)), (int(cut_x), int(cut_y)), line_color, 2, 8)

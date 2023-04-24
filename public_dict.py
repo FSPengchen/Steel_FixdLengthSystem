@@ -65,10 +65,33 @@ public_dict = {
     'sql_weighting_F3': 0,  # 写入SQL重量
     'sql_weighting_F4': 0,  # 写入SQL重量
     'auto_adjustment_switch_F1': True,  # 1流自动调整模式开关
-
-
-
-
+    'auto_adjustment_switch_F2': True,  # 2流自动调整模式开关
+    'auto_adjustment_switch_F3': True,  # 3流自动调整模式开关
+    'auto_adjustment_switch_F4': True,  # 4流自动调整模式开关
+    'action_cut_1f': False,  # 1流切割发送至PLC布尔量
+    'action_cut_2f': False,  # 2流切割发送至PLC布尔量
+    'action_cut_3f': False,  # 3流切割发送至PLC布尔量
+    'action_cut_4f': False,  # 4流切割发送至PLC布尔量
+    '1f_rset_count_end': False, #1流切割复位计数结束标识 布尔量
+    '2f_rset_count_end': False, #2流切割复位计数结束标识 布尔量
+    '3f_rset_count_end': False,  # 3流切割复位计数结束标识 布尔量
+    '4f_rset_count_end': False,  # 4流切割复位计数结束标识 布尔量
+    'selected_status_F1': False,  # 选择1流修改切割线状态
+    'selected_status_F2': False,  # 选择2流修改切割线状态
+    'selected_status_F3': False,  # 选择3流修改切割线状态
+    'selected_status_F4': False,  # 选择4流修改切割线状态
+    'Weight_1f_list': [],  # 1流称重期间暂存数组
+    'Weight_2f_list': [],  # 2流称重期间暂存数组
+    'Weight_3f_list': [],  # 3流称重期间暂存数组
+    'Weight_4f_list': [],  # 4流称重期间暂存数组
+    'send_cut_1f_stat': False,  # 1流防止再次触发切割信号延时状态
+    'send_cut_2f_stat': False,  # 2流防止再次触发切割信号延时状态
+    'send_cut_3f_stat': False,  # 3流防止再次触发切割信号延时状态
+    'send_cut_4f_stat': False,  # 4流防止再次触发切割信号延时状态
+    'Weight_1f_list_stat': False,  # 1流状态称重期间缓冲数组，重量降为0时，清理数组
+    'Weight_2f_list_stat': False,  # 2流状态称重期间缓冲数组，重量降为0时，清理数组
+    'Weight_3f_list_stat': False,  # 3流状态称重期间缓冲数组，重量降为0时，清理数组
+    'Weight_4f_list_stat': False,  # 4流状态称重期间缓冲数组，重量降为0时，清理数组
 }
 
 list_SteelData = []
